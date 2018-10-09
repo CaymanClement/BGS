@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Response;
 
+use App\Mail\ApprovedMail;
+use Illuminate\Support\Facades\Mail;
+
 
 class HomeController extends Controller
 {
@@ -92,41 +95,56 @@ class HomeController extends Controller
     public function add_post(Request $request)
     {
 
+
+    $limits = DB::table('limits')->where('user_id', Auth::user()->id )->first();
+
+         $this->validate($request, [
+            //'month' => 'required',
+            //'place' => 'required', 
+            'market_cost' => 'required|numeric',
+            'travelling_cost' => 'required|numeric',
+            'fuel_cost' =>'required|numeric',
+            'postage_cost' => 'required|numeric',
+            'fax_cost' => 'required|numeric',
+          //'description' => 'required',
+            'expected_premium' => 'required|numeric'
+           // 'file_uploaded' => 'required'
+         ]);  
+
   
     $branch_details = DB::table('branches')->where('branch_id', Auth::user()->branch_id_)->get();
 
-    $limits = DB::table('limits')->where('user_id', Auth::user()->id )->first();
 
     $budget_record = DB::table('budget')->where('user_id', Auth::user()->id )->where('business_status','=','Not settled')->orWhere('business_status','=','Pushed Forward')->count();
 
     if($budget_record>'1'){
 
-        return redirect()->back()->withInput($request->all)->withErrors($limits)->with('failure','Sorry you still have an Unsettled Business. Navigate to "My Requests" to see.');
+        return redirect()->back()->withInput(Input::all())->withInput(Input::all())->with('failure','Sorry you still have an Unsettled Business. Navigate to "My Requests" to see.');
     }
 
     if(Input::get('market_cost')>$limits->market_cost){
 
-        return redirect()->back()->with('failure','Sorry the market cost exceeds the limit of '.$limits->market_cost);
+        return redirect()->back()->withInput(Input::all())->with('failure','Sorry the market cost exceeds the limit of '.$limits->market_cost);
     }
 
     if(Input::get('travelling_cost')>$limits->travelling_cost){
 
-        return redirect()->back()->with('failure','Sorry the Travelling cost exceeds the limit of '.$limits->travelling_cost);
+        return redirect()->back()->withInput(Input::all())->with('failure','Sorry the Travelling cost exceeds the limit of '.$limits->travelling_cost);
     }
 
     if(Input::get('fuel_cost')>$limits->fuel_cost){
 
-        return redirect()->back()->with('failure','Sorry the Fuel cost exceeds the limit of '.$limits->fuel_cost);
+        return redirect()->back()->withInput(Input::all())->with('failure','Sorry the Fuel cost exceeds the limit of '.$limits->fuel_cost);
     }
 
     if(Input::get('postage_cost')>$limits->postage_cost){
 
-        return redirect()->back()->with('failure','Sorry the Postage cost exceeds the limit of '.$limits->postage_cost);
+        return redirect()->back()->withInput(Input::all())->with('failure','Sorry the Postage cost exceeds the limit of '.$limits->postage_cost);
     }
 
     if(Input::get('fax_cost')>$limits->fax_cost){
 
-        return redirect()->back()->with('failure','Sorry the Fax cost exceeds the limit of '.$limits->fax_cost);
+        return redirect()->back()->withInput(Input::all())->with('failure','Sorry the Fax cost exceeds the limit of '.$limits->fax_cost);
     }
 
    $balance = DB::table('balance')->join('budget', 'balance.budget_id', '=' , 'budget.budget_id')->where('budget.user_id', Auth::user()->id)->select('*')->orderBy('budget.updated_at', 'desc')->first();
@@ -141,8 +159,32 @@ class HomeController extends Controller
 $file = $request['file_uploaded'];
 $mime = $file->getClientOriginalExtension();
 $now = Carbon::now();
-$filename_renamed = Auth::user()->username.'_'.Input::get('month').'_'.$now->month.'_'.$now->year.'_.'.$mime;
+$filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
 $file->storeAs('\files',$filename_renamed);
+
+/*
+
+            $budget = new BudgetModel;
+        
+            $budget->user_id = Auth::user()->id;
+            $budget->place = Input::get('month');
+            $budget->market_cost = Input::get('place');
+            $budget->travelling_cost = Input::get('market_cost');
+            $budget->travelling_cost = Input::get('travelling_cost');
+            $budget->fuel_cost = Input::get('fuel_cost');
+            $budget->postage_cost = Input::get('postage_cost');
+            $budget->fax_cost = Input::get('fax_cost');
+            $budget->budget_status = 'created';
+            $budget->business_status = 'Not settled';
+            $budget->description = Input::get('output_description');
+            $budget->expected_premium = Input::get('expected_premium');
+            $budget->carry_over_balance = '0';
+            $budget->first_approval = Input::get('reviewer');
+            $budget->file_name = $filename_renamed;
+            $budget->quarter = '1';
+            $budget->save();
+
+*/
 
 
 
@@ -162,7 +204,8 @@ $file->storeAs('\files',$filename_renamed);
             'expected_premium' => Input::get('expected_premium'),
             'carry_over_balance' => '0',
             'first_approval' => Input::get('reviewer'),
-            'file_name' => $filename_renamed,
+            'file_name' => $filename_renamed ,
+            'file_name' => $filename_renamed ,
             'created_at'     =>   Carbon::now(),
             'updated_at'     =>  Carbon::now(),
             'quarter' => '1'   ));
@@ -174,7 +217,7 @@ $file->storeAs('\files',$filename_renamed);
 $file = $request['file_uploaded'];
 $mime = $file->getClientOriginalExtension();
 $now = Carbon::now();
-$filename_renamed = Auth::user()->username.'_'.Input::get('month').'_'.$now->month.'_'.$now->year.'_.'.$mime;
+$filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
 $file->storeAs('\files',$filename_renamed);
 
 
@@ -195,6 +238,7 @@ $file->storeAs('\files',$filename_renamed);
             'expected_premium' => Input::get('expected_premium'),
             'carry_over_balance' => '0',
             'first_approval' => Input::get('reviewer'),
+            'file_name' => $filename_renamed ,
             'created_at'     =>   Carbon::now(),
             'updated_at'     =>  Carbon::now(),
             'quarter' => '2'   ));
@@ -204,7 +248,7 @@ $file->storeAs('\files',$filename_renamed);
 $file = $request['file_uploaded'];
 $mime = $file->getClientOriginalExtension();
 $now = Carbon::now();
-$filename_renamed = Auth::user()->username.'_'.Input::get('month').'_'.$now->month.'_'.$now->year.'_.'.$mime;
+$filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
 $file->storeAs('\files',$filename_renamed);
 
 
@@ -225,6 +269,7 @@ $file->storeAs('\files',$filename_renamed);
             'expected_premium' => Input::get('expected_premium'),
             'carry_over_balance' => '0',
             'first_approval' => Input::get('reviewer'),
+            'file_name' => $filename_renamed ,
             'created_at'     =>   Carbon::now(),
             'updated_at'     =>  Carbon::now(),            
             'quarter' => '3'   ));
@@ -234,7 +279,7 @@ $file->storeAs('\files',$filename_renamed);
 $file = $request['file_uploaded'];
 $mime = $file->getClientOriginalExtension();
 $now = Carbon::now();
-$filename_renamed = Auth::user()->username.'_'.Input::get('month').'_'.$now->month.'_'.$now->year.'_.'.$mime;
+$filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
 $file->storeAs('\files',$filename_renamed);
 
 
@@ -255,6 +300,7 @@ $file->storeAs('\files',$filename_renamed);
             'expected_premium' => Input::get('expected_premium'),
             'carry_over_balance' => '0',
             'first_approval' => Input::get('reviewer'),
+            'file_name' => $filename_renamed ,
             'created_at'     =>   Carbon::now(),
             'updated_at'     =>  Carbon::now(),
             'quarter' => '4'   ));
@@ -408,6 +454,11 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         }
 
         elseif(Auth::user()->title == 'HFA' && $count_record == '0'){
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'On Approval';
+          $budget->save();
+
         $approve = ApprovalsModel::where('category','=','Recommended for budget by:')->where('budget_id',$id)->first();
         $approve->approving_user_id = Auth::user()->id;
         $approve->status = 'Approved';
@@ -418,6 +469,11 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         }
 
         elseif(Auth::user()->title == 'DGM' && $count_record == '0'){
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'On Approval';
+          $budget->save();
+
         $approve = ApprovalsModel::where('category','=','Recommended for activity by:')->where('budget_id',$id)->first();
         $approve->approving_user_id = Auth::user()->id;
         $approve->status = 'Approved';
@@ -471,6 +527,10 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->forward_to = NULL;
         $approve->save();
 
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Rejected';
+          $budget->save();        
+
         return redirect('approved')->with('failure','Budget Rejected Successfully!');
         }
 
@@ -489,6 +549,10 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->comment = Input::get('comment');
         $approve->forward_to = NULL;
         $approve->save();
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Rej';
+          $budget->save();        
 
         return redirect('approved')->with('success','Budget Rejected Successfully!');
         }
@@ -517,6 +581,11 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->comment = Input::get('comment');
         $approve->forward_to = Input::get('reviewer');
         $approve->save();
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Rejected';
+          $budget->save();   
+
         return redirect('approved')->with('success','Budget Rejected Successfully!');
         }
 
@@ -549,6 +618,10 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->comment = Input::get('comment');
         $approve->forward_to = NULL;
         $approve->save();
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Rejected';
+          $budget->save();   
 
         return redirect('approved')->with('failure','Budget Rejected Successfully!');
         }
@@ -588,6 +661,11 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->comment = Input::get('comment');
         $approve->forward_to = Input::get('reviewer');
         $approve->save();
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Returned to'.Input::get('reviewer');
+          $budget->save();   
+
         return redirect('approved')->with('success','Budget Returned Successfully!');
 
         }
@@ -601,6 +679,11 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->comment = Input::get('comment') ;
         $approve->forward_to = Input::get('reviewer');
         $approve->save();
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Returned to'.Input::get('reviewer');
+          $budget->save();   
+
         return redirect('approved')->with('success','Budget Returned Successfully!');
 
         }
@@ -614,6 +697,11 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->comment = Input::get('comment');
         $approve->forward_to = Input::get('reviewer');
         $approve->save();
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Returned to'.Input::get('reviewer');
+          $budget->save();   
+
         return redirect('approved')->with('success','Budget Returned Successfully!');
         }
 
@@ -624,6 +712,11 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $approve->comment = Input::get('comment');
         $approve->forward_to = Input::get('reviewer');
         $approve->save();
+
+          $budget = BudgetModel::where('budget_id',$id)->first();
+          $budget->budget_status = 'Returned to'.Input::get('reviewer');
+          $budget->save();   
+
         return redirect('approved')->with('success','Budget Returned Successfully!');
 
        }
@@ -665,7 +758,7 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         
         $show_reviewer = DB::table('approvals')->join('users', 'users.id', '=', 'approvals.approving_user_id')->where('budget_id', $id )->select('*')->get();
        
-        $show_status = DB::table('approvals')->where('budget_id', $id )->where('category','=','Approved by:')->where('status','=','Approved')->count();
+        $show_status = DB::table('approvals')->where('budget_id', $id )->where('category','=','Approved by:')->where('status','=','Approved')->orWhere('status','=','On Approval')->count();
         $total = DB::table('balance')->where('budget_id', $id )->first();
 
         $remarks_details = DB::table('remarks')->where('budget_id', $id )->first();
@@ -802,8 +895,38 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
 
 
 
-    public function update_budget($id)
+    public function update_budget(Request $request, $id)
     {
+
+    $limits = DB::table('limits')->where('user_id', Auth::user()->id )->first();
+    $budget = DB::table('budget')->where('budget_id', $id )->first();
+
+
+         $this->validate($request, [
+            'market_cost' => 'required|numeric',
+            'travelling_cost' => 'required|numeric',
+            'fuel_cost' =>'required|numeric',
+            'postage_cost' => 'required|numeric',
+            'fax_cost' => 'required|numeric',
+            'expected_premium' => 'required|numeric'
+         ]);      
+
+
+$old_market = $limits->market_cost+$budget->market_cost;
+$old_travel =  $limits->travelling_cost+$budget->travelling_cost;
+$old_fuel =  $limits->fuel_cost+$budget->fuel_cost;
+$old_postage =  $limits->fax_cost+$budget->fax_cost;
+$old_fax =  $limits->postage_cost+$budget->postage_cost;
+
+
+        $limits = limit::where('user_id', Auth::user()->id )->first();
+        $limits->market_cost = $old_market-Input::get('market_cost');
+        $limits->travelling_cost = $old_travel-Input::get('travelling_cost');
+        $limits->fuel_cost = $old_fuel-Input::get('fuel_cost');
+        $limits->postage_cost = $old_postage-Input::get('fax_cost');
+        $limits->fax_cost = $old_fax-Input::get('postage_cost');
+        $limits->save();
+
 
 
         $budget = BudgetModel::where('budget_id',$id)->first();
@@ -815,7 +938,7 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $budget->fax_cost = Input::get('fax_cost');
         $budget->description =Input::get('output_description');
         $budget->expected_premium = Input::get('expected_premium');
-        $budget->budget_status = 'created *';
+        $budget->budget_status = 'Edited';
         $budget->save();
 
     $budget = DB::table('budget')->where('budget_id', $id )->first();
@@ -844,7 +967,7 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
     
         $filename= $file_ob->file_name;
 
-        $path = public_path().'\files\\'.$filename;
+        $path = storage_path().'\\app\\files\\'.$filename;
 /*
         $file = Storage::disk('local')->get('/files/'.$filename);
       

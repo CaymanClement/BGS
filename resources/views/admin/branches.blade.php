@@ -7,7 +7,7 @@
                 <div class="panel-body">
 <a href="#" class="btn btn-success btn-block">Register Branch</a>
 
-					<table class="table table-striped">
+					<table id="clemtable" class="table table-striped">
                         <thead>
                           <tr>
                             <th>Branch Name:</th>

@@ -42,7 +42,7 @@
 
                             <div class="col-md-6">
                                  <select name="month" class="form-control" value="{{ old('month') }}" id="month" required autofocus>
-                                   <option value="">Choose Month: </option>
+                                   <option value="{{ $budget_details->month }}">{{ $budget_details->month }}</option>
                                    <option value="January">January</option>
                                    <option value="February">February</option>
                                    <option value="March">March</option>

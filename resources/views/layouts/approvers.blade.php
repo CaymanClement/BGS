@@ -14,6 +14,7 @@
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
     <link href="/css/extra.css" rel="stylesheet">
+    <link href="{{ asset('Datatables/tables/datatables.min.css') }}" rel='stylesheet'>
 
 
     <!-- Scripts -->
@@ -107,5 +108,15 @@
           });
         });
     </script>
+
+<!--  For data table    -->
+<script>
+    $(document).ready(function() {
+    $('#clemtable').DataTable();
+} );
+</script>
+<script src="{{ asset('Datatables/tables/datatables.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('JQUERY/js/jquery-3.2.1.min.js') }}" type="text/javascript"></script>
+
 </body>
 </html>

@@ -10,6 +10,9 @@ use DB;
 use Auth;
 use Carbon\Carbon;
 
+use App\Mail\ApprovedMail;
+use Illuminate\Support\Facades\Mail;
+
 class LimitsController extends Controller
 {
     /**

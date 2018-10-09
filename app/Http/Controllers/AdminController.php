@@ -12,6 +12,9 @@ use App\User;
 use Illuminate\Support\Facades\Input;
 use App\admin;
 use App\graph;
+
+use App\Mail\ApprovedMail;
+use Illuminate\Support\Facades\Mail;
 //use Illuminate\Support\Facades\Log;
 
 

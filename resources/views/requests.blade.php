@@ -28,7 +28,7 @@
 
                 <div class="panel-body">
                     
-                     <table class="table table-striped">
+                     <table id="clemtable" class="table table-striped">
                         <thead>
                           <tr>
                             <th>Date of Request:</th>
@@ -61,7 +61,7 @@
                             @endif
 
                             <td>{{ $list->market_cost+$list->travelling_cost+$list->fuel_cost+$list->postage_cost+$list->fax_cost }}</td>
-                            
+
 <td> <a href="/view-file-738283873764671737{{ $list->budget_id }}93624163535261" class="btn btn-warning">Get File</a></td>
 
 

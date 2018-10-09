@@ -31,7 +31,7 @@
 
 <a href="/admin/register-user" class="btn btn-success btn-block">Create User</a><br>
 
-<table class="table">
+<table id="clemtable" class="table">
     <tr>
         <th>Name</th>
         <th>User ID</th>

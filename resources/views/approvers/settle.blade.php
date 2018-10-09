@@ -11,7 +11,7 @@
                 <div class="panel-body">
                     
 
-                     <table class="table table-striped">
+                     <table id="clemtable" class="table table-striped">
                         <thead>
                           <tr>
                             <th>Name:</th>

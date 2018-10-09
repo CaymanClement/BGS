@@ -17,6 +17,9 @@ use App\Models\RemarksModel;
 use App\Models\BalanceModel;
 use App\Models\UpdatesModel;
 
+use App\Mail\ApprovedMail;
+use Illuminate\Support\Facades\Mail;
+
 class ApproversController extends Controller
 {
 
@@ -127,6 +130,7 @@ class ApproversController extends Controller
         $requests = DB::table('users')->join('budget', 'users.id', '=', 'budget.user_id')->select('*')->get();
        
         return view('approvers.requests', compact('requests'));
+        
     }
 
 

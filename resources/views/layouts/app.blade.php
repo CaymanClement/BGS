@@ -14,6 +14,7 @@
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
     <link href="/css/extra.css" rel="stylesheet">
+    <link href="{{ asset('Datatables/tables/datatables.min.css') }}" rel='stylesheet'>
 
 
     <!-- Scripts -->
@@ -23,7 +24,7 @@
         ]); ?>
     </script>
 </head>
-<body style="background:url(img/bg.jpg); background-size:cover;">
+<body style="background:url(/img/bg.jpg); background-size:cover;">
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
@@ -106,5 +107,14 @@
           });
         });
     </script>
+
+<!--  For data table    -->
+<script>
+    $(document).ready(function() {
+    $('#clemtable').DataTable();
+} );
+</script>
+<script src="{{ asset('DataTables/tables/datatables.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('JQUERY/js/jquery-3.2.1.min.js') }}" type="text/javascript"></script>
 </body>
 </html>

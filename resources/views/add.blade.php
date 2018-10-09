@@ -27,7 +27,6 @@
             <div class="panel panel-default">
                 <div class="panel-heading" style="background:url(/img/bg2.jpg); background-size:cover; color: white;"><b>Add Request:</b></div>
                 <div class="panel-body">
-                    <p align="right"><b>Account Balance:</b> {{ $balance->resultant_balance }} TZS</p>
 
                     <form class="form-horizontal" role="form" id="inst_form" method="POST" action="{{ url('/add/post') }}"  enctype="multipart/form-data">
                         {{ csrf_field() }}
@@ -60,8 +59,8 @@
                             <label for="month" class="col-md-4 control-label">Month</label>
 
                             <div class="col-md-6">
-                                 <select name="month" class="form-control" value="{{ old('month') }}" id="month" required autofocus>
-                                   <option value="">Choose Month: </option>
+                                 <select name="month" class="form-control" id="month" required autofocus>
+                                   <option value="{{ old('month') }}">{{ old('month') }}</option>
                                    <option value="January">January</option>
                                    <option value="February">February</option>
                                    <option value="March">March</option>
@@ -88,7 +87,7 @@
                             <label for="place" class="col-md-4 control-label">Place</label>
 
                             <div class="col-md-6">
-                                <input id="place" type="text" name="place" class="form-control">
+                                <input id="place" type="text" name="place" class="form-control" value="{{ old('place') }}">
 
                                 @if ($errors->has('place'))
                                     <span class="help-block">
@@ -104,7 +103,7 @@
                             <label for="market_cost" class="col-md-4 control-label">Market Cost</label>
 
                             <div class="col-md-6">
-                                <input placeholder="Maximum limit {{ $limits->market_cost }}" id="market_cost" type="text" class="inst_amount form-control" name="market_cost" pattern="[0-9]{*}" required>
+                                <input placeholder="Maximum limit {{ $limits->market_cost }}" id="market_cost" type="text" class="inst_amount form-control" name="market_cost" pattern="[0-9]{*}" value="{{ old('market_cost') }}" required>
 
                                 @if ($errors->has('market_cost'))
                                     <span class="help-block">
@@ -118,7 +117,7 @@
                             <label for="travelling_cost" class="col-md-4 control-label">Travelling Local Cost</label>
 
                             <div class="col-md-6">
-                                <input placeholder="Maximum limit {{ $limits->travelling_cost }}" id="travelling_cost" type="text" class="inst_amount form-control" name="travelling_cost" pattern="[0-9]{*}" required>
+                                <input placeholder="Maximum limit {{ $limits->travelling_cost }}" id="travelling_cost" type="text" class="inst_amount form-control" name="travelling_cost" pattern="[0-9]{*}" value="{{ old('travelling_cost') }}" required>
 
                                 @if ($errors->has('travelling_cost'))
                                     <span class="help-block">
@@ -132,7 +131,7 @@
                             <label for="fuel_cost" class="col-md-4 control-label">M/V Fuel & Lubricants Cost</label>
 
                             <div class="col-md-6">
-                                <input placeholder="Maximum limit {{ $limits->fuel_cost }}" id="fuel_cost" type="text" class="inst_amount form-control" name="fuel_cost" pattern="[0-9]{*}" required>
+                                <input placeholder="Maximum limit {{ $limits->fuel_cost }}" id="fuel_cost" type="text" class="inst_amount form-control" name="fuel_cost" pattern="[0-9]{*}" value="{{ old('fuel_cost') }}" required>
 
                                 @if ($errors->has('fuel_cost'))
                                     <span class="help-block">
@@ -146,7 +145,7 @@
                             <label for="postage_cost" class="col-md-4 control-label">Postage Cost</label>
 
                             <div class="col-md-6">
-                                <input placeholder="Maximum limit {{ $limits->postage_cost }}" id="postage_cost" type="text" class="inst_amount form-control" name="postage_cost" pattern="[0-9]{*}" required>
+                                <input placeholder="Maximum limit {{ $limits->postage_cost }}" id="postage_cost" type="text" class="inst_amount form-control" name="postage_cost" pattern="[0-9]{*}" value="{{ old('postage_cost') }}" required>
 
                                 @if ($errors->has('postage_cost'))
                                     <span class="help-block">
@@ -160,7 +159,7 @@
                             <label for="fax_cost" class="col-md-4 control-label">Fax Cost</label>
 
                             <div class="col-md-6">
-                                <input placeholder="Maximum limit {{ $limits->fax_cost }}" id="fax_cost" type="text" class="inst_amount form-control" name="fax_cost" pattern="[0-9]{*}" required>
+                                <input placeholder="Maximum limit {{ $limits->fax_cost }}" id="fax_cost" type="text" class="inst_amount form-control" name="fax_cost" pattern="[0-9]{*}" value="{{ old('fax_cost') }}" required>
 
                                 @if ($errors->has('fax_cost'))
                                     <span class="help-block">
@@ -174,7 +173,7 @@
                             <label for="total_cost" class="col-md-4 control-label">Total Cost</label>
 
                             <div class="col-md-6">
-                        <input type="text" class="form-control" id="total_amount" name="total_cost" required disabled>
+                        <input type="text" class="form-control" id="total_amount" name="total_cost" value="{{ old('total_cost') }}" required disabled>
 
                                 @if ($errors->has('total_cost'))
                                     <span class="help-block">
@@ -189,7 +188,7 @@
                             <label for="output_description" class="col-md-4 control-label">Expected output Description:</label>
 
                             <div class="col-md-6">
-                                <textarea id="output_description" class="form-control" name="output_description" required></textarea>
+                                <textarea id="output_description" class="form-control" name="output_description" required>{{ old('output_description') }}</textarea>
 
                                 @if ($errors->has('output_description'))
                                     <span class="help-block">
@@ -204,7 +203,7 @@
                             <label for="expected_premium" class="col-md-4 control-label">Expected Premium:</label>
 
                             <div class="col-md-6">
-                                <input id="expected_premium" type="text" class="form-control" name="expected_premium" pattern="[0-9]{*}" required>
+                                <input id="expected_premium" type="text" class="form-control" name="expected_premium" pattern="[0-9]{*}" value="{{ old('expected_premium') }}" required>
 
                                 @if ($errors->has('expected_premium'))
                                     <span class="help-block">
@@ -218,10 +217,10 @@
                             <label for="reviewer" class="col-md-4 control-label">Choose Reviewer</label>
 
                             <div class="col-md-6">
-                                 <select name="reviewer" class="form-control" value="{{ old('reviewer') }}" id="reviewer" required autofocus>
-                                   <option value="">Choose Reviewer: </option>
+                                 <select name="reviewer" class="form-control" id="reviewer" required autofocus>
+                                   <option value="{{ old('reviewer') }}">{{ old('reviewer') }}</option>
                                     @foreach($reviewer_list as $reviewer)
-                                    <option value="{{ $reviewer->id }}">{{ $reviewer->name }} - {{ $reviewer->title }}</option>
+                                    <option value="{{ $reviewer->name }}">{{ $reviewer->name }} - {{ $reviewer->title }}</option>
                                     @endforeach
                                  </select>
                                 
@@ -237,7 +236,7 @@
                             <label for="file_uploaded" class="col-md-4 control-label">File Uploaded:</label>
 
                             <div class="col-md-6">
-                                <input id="file_uploaded" type="file" class="form-control" name="file_uploaded" pattern="[0-9]{*}">
+                                <input id="file_uploaded" type="file" class="form-control" name="file_uploaded" value="{{ old('file_uploaded') }}" required>
 
                                 @if ($errors->has('file_uploaded'))
                                     <span class="help-block">
@@ -293,4 +292,6 @@ $(function() {
   sumIt() // run when loading
 });
 </script>
+
+
 @endsection

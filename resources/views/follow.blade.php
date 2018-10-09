@@ -56,8 +56,13 @@
                             <tr><td>Settle Business</td><td><a href="#" class="btn btn-primary btn-block disabled">Settle Business</a></td></tr>
 @endif
 
-@if( $show->budget_status=='created'|| $show_status == 0 || $show->budget_status=='created *' )
+@if( $show->budget_status =='created' && $show_status == 0 )
                             <tr><td>Edit:</td><td><a href="/requests/follow-up/32789{{ $show->budget_id }}43789721/edit" class="btn btn-warning btn-block">Edit Details</a></td></tr>
+@elseif( $show->budget_status =='Edited' && $show_status == 0  )
+                            <tr><td>Edit:</td><td><a href="/requests/follow-up/32789{{ $show->budget_id }}43789721/edit" class="btn btn-warning btn-block">Edit Details</a></td></tr>
+@elseif( $show->budget_status =='Rejected' && $show_status == 0  )
+                            <tr><td>Edit:</td><td><a href="/requests/follow-up/32789{{ $show->budget_id }}43789721/edit" class="btn btn-warning btn-block">Edit Details</a></td></tr>
+
 @else
                             <tr><td>Edit:</td><td><a href="#" class="btn btn-warning btn-block disabled">Edit Details</a></td></tr>
 @endif
@@ -67,34 +72,21 @@
 
 <h4>Approvals:</h4>
 <div class="row">
-<div class="col-lg-4">
-<table class="table table-striped">
-                                    <thead>
-                                      <tr>
-                                        <th>Category:</th>
-                                       </tr>
-                                   </thead>
-                                   <tbody>
-                                       <tr><td>Reviewed by:</td></tr>
-                                       <tr><td>Recommended for budget by:</td></tr>
-                                       <tr><td>Recommended for activity by:</td></tr>
-                                       <tr><td>Approved by:</td></tr>
-                                   </tbody>
-                               </table>
-                           </div>
-
-                        <div class="col-lg-8">
+                        <div class="col-lg-12">
                                   <table class="table table-striped">
                                     <thead>
                                       <tr>
+                                        <th>Reviewed by:</th>
                                         <th>Name:</th>
                                         <th>Comment:</th>
+                                        <th>Status:</th>
                                         <th>Date:</th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       @foreach($show_reviewer as $reviewer)
                                       <tr>
+                                        <td>{{ $reviewer->category }}</td>
                                         <td>
                                         @if( $reviewer->approving_user_id == 0)
                                          Pending
@@ -103,6 +95,7 @@
                                         @endif
                                         </td>
                                         <td>{{ $reviewer->comment }}</td>
+                                        <td>{{ $reviewer->status }}</td>
                                         <td>{{ $reviewer->updated_at }}</td>
                                       </tr>
                                       @endforeach

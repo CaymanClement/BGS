@@ -1,6 +1,9 @@
 <?php
 use App\graph;
 use Carbon\Carbon; 
+
+use App\Mail\ApprovedMail;
+use Illuminate\Support\Facades\Mail;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -76,18 +79,11 @@ Route::get('/admin/limit/{id}/reset', 'LimitsController@reset');
 Route::get('/view-file-738283873764671737{id}93624163535261', 'HomeController@download_file');
 
 
+Route::get('/change-password', 'AdminController@change_password');
 
 
 
-
-/*Route::get('/graph', function () {
-    //Fetch amount
-    $amount = graph::where('created_at', '>=', Carbon::now()->firstOfYear())
-            ->selectRaw('MONTH as month, sum(market_cost) as market_cost')
-            ->groupBy('month')
-            ->pluck('market_cost', 'month');
-
-    //Load the page and pass the data
-    return view('graph', compact('amount'));
-}); */
-
+Route::get('/mail',function () {
+    
+        Mail::to("luis@gmail.com")->send(new ApprovedMail());
+});

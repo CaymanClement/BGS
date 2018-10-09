@@ -28,7 +28,7 @@
 
                 <div class="panel-body">
                     
-                     <table class="table table-striped">
+                     <table id="clemtable" class="table table-striped">
                         <thead>
                           <tr>
                             <th>Name:</th>
@@ -52,26 +52,18 @@
 
                             @if($requests->budget_status == 'Approved')
                             <td class="success">
-@if($requests->budget_status == 'created *')
-Edited
-@else
 {{ $requests->budget_status }}
-@endif
                             </td>
                             <td><button class="btn btn-success disabled">Approve</button></td>
 
 
                             @else
                             <td class="danger">
-@if($requests->budget_status == 'created *')
-Edited
-@else
 {{ $requests->budget_status }}
-@endif
                             </td>
                             <td><a href="/approve/329382329383293823983238{{ $requests->budget_id }}874393239328923982378923782739237" class="btn btn-success">Approve</a></td>
                             @endif
-                            <td> <a href="/view-file-738283873764671737{{ $list->budget_id }}93624163535261" class="btn btn-warning">Get File</a></td>
+                            <td> <a href="/view-file-738283873764671737{{ $requests->budget_id }}93624163535261" class="btn btn-warning">Get File</a></td>
                           </tr>
                           @endforeach
    
