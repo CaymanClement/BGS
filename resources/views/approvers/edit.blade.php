@@ -10,7 +10,7 @@
                 <div class="panel-body">
                     
 
-                    <form class="form-horizontal" role="form" id="inst_form" method="POST" action="/approver/32789{{ $budget_details->budget_id }}43789721/edit/post">
+                    <form class="form-horizontal" role="form" id="inst_form" enctype="multipart/form-data" method="POST" action="/approver/32789{{ $budget_details->budget_id }}43789721/edit/post">
                         {{ csrf_field() }}
       
 
@@ -152,6 +152,21 @@
                                 @if ($errors->has('expected_premium'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('expected_premium') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+
+                        <div class="form-group{{ $errors->has('file_uploaded') ? ' has-error' : '' }}">
+                            <label for="file_uploaded" class="col-md-4 control-label">File Uploaded:</label>
+
+                            <div class="col-md-6">
+                                <input id="file_uploaded" type="file" class="form-control" name="file_uploaded" value="{{ old('file_uploaded') }}" required>
+
+                                @if ($errors->has('file_uploaded'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('file_uploaded') }}</strong>
                                     </span>
                                 @endif
                             </div>

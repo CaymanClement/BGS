@@ -28,7 +28,7 @@
 </head>
 <body  style="background:url(/img/bg.jpg); background-size:cover;">
     <div id="app">
-        <nav class="navbar navbar-default navbar-static-top">
+        <nav class="navbar navbar-default navbar-fixed-top"  style="background:url(/img/slide-02.jpg); background-size:cover; color: white;">
             <div class="container">
                 <div class="navbar-header">
 
@@ -41,8 +41,8 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        ACTIVITY PLANNER
+                    <a class="navbar-brand" href="#">
+                        <img src="{{ asset('img/logo.png') }}" height="30" width="130" alt="ACTIVITY PLANNER">
                     </a>
                 </div>
 
@@ -60,22 +60,23 @@
 
                                         @else
 
-                                          <li><a href="/admin">Dashboard</a></li>
-                                          <li><a href="/admin/requests">Budget Requests</a></li>
-                                          <li><a href="/admin/users">Users</a></li>
-                                          <li><a href="/admin/limits">Amount Limits</a></li>
-                                          <li><a href="/admin/branches">Branches</a></li>
-                                          <li><a href="/admin/reports" >Reports</a></li>
+                                          <li class="hover" ><a style="color: white;" href="/admin">Dashboard</a></li>
+                                          <li class="hover" ><a style="color: white;" href="/admin/requests">Budget Requests</a></li>
+                                          <li class="hover" ><a style="color: white;" href="/admin/users">Users</a></li>
+                                          <li class="hover" ><a style="color: white;" href="/admin/limits">Amount Limits</a></li>
+                                          <li class="hover" ><a style="color: white;" href="/admin/branches">Branches</a></li>
+                                          <li class="hover" ><a style="color: white;" href="/admin/reports" >Reports</a></li>
 
-                                        <li>
-                                            <a href="#"><i>Logged in as
-                                                {{ Auth::user()->name }}
-                                            </i></a>
-                                        </li>
+                                      <li class="dropdown">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white;"><i>Logged in as {{ Auth::user()->name }}</i>
+                                        <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                          <li><a href="/change-password">Changed Password</a></li>
+                                      </ul>
+                                      </li>
 
 
-                                      <li>
-                                            <a href="{{ url('/logout') }}"
+                                      <li class="hover" style="background: red;"><a style="color: white;"  href="{{ url('/logout') }}"
                                                 onclick="event.preventDefault();
                                                          document.getElementById('logout-form').submit();">
                                                 Logout
@@ -94,9 +95,12 @@
                 </div>
             </div>
         </nav>
+<br><br><br>
+
 <div class = "container">
         @yield('content')</div>
     </div>
+
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>

@@ -5,8 +5,8 @@
 	<title>Activity Planner</title>
 </head>
 <body>
-Hello {{ $name }}	
-<h4>Your budget request has been approved</h4>
+Hello
+<h4>Your budget request of has been approved</h4>
 
 	
 </body>

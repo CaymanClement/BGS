@@ -10,7 +10,7 @@
                 <div class="panel-body">
                     
 
-                    <form class="form-horizontal" role="form" id="inst_form" method="POST" action="/requests/follow-up/32789{{ $budget_details->budget_id }}43789721/edit/post">
+                    <form class="form-horizontal" role="form" id="inst_form" method="POST" action="/requests/follow-up/32789{{ $budget_details->budget_id }}43789721/edit/post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
@@ -180,9 +180,25 @@
                             </div>
                         </div>
 
+
+                        <div class="form-group{{ $errors->has('file_uploaded') ? ' has-error' : '' }}">
+                            <label for="file_uploaded" class="col-md-4 control-label">File Uploaded:</label>
+
+                            <div class="col-md-6">
+                                <input id="file_uploaded" type="file" class="form-control" name="file_uploaded" value="{{ $budget_details->file_name }}" required>
+
+                                @if ($errors->has('file_uploaded'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('file_uploaded') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary btn-block">
+                                <button type="submit" class="btn btn-success btn-block">
                                     Update Request
                                 </button>
                             </div>

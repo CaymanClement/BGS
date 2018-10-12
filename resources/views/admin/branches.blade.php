@@ -5,7 +5,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading"  style="background:url(/img/bg2.jpg); background-size:cover; color: white;">Branches</div>
                 <div class="panel-body">
-<a href="#" class="btn btn-success btn-block">Register Branch</a>
+<a href="#" class="btn btn-success btn-block">Register Branch</a> <br>
 
 					<table id="clemtable" class="table table-striped">
                         <thead>

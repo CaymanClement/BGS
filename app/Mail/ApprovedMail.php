@@ -30,12 +30,7 @@ class ApprovedMail extends Mailable
      */
     public function build()
     {
-        $budget_details = DB::table('users')->join('budget', 'users.id', '=', 'budget.user_id')->select('*')->get();
-        
-        return $this->view('mails.approved')
-        ->with('name', $budget_details->name )
-        ->with('name', $budget_details->name )
-        ->with('name', $budget_details->name )
-        ->with('name', $budget_details->name );
+          return $this->view('mails.approved')
+        ->with('prev_approved', Auth::user()->name);
     }
 }

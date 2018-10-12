@@ -62,7 +62,7 @@
 
                             <td>{{ $list->market_cost+$list->travelling_cost+$list->fuel_cost+$list->postage_cost+$list->fax_cost }}</td>
 
-<td> <a href="/view-file-738283873764671737{{ $list->budget_id }}93624163535261" class="btn btn-warning">Get File</a></td>
+<td> <a href="/view-file-738283873764671737{{ $list->budget_id }}93624163535261" class="btn btn-warning">ViewFile</a></td>
 
 
                             <td> <a href="/requests/follow-up/32789{{ $list->budget_id }}43789721" class="btn btn-success">Follow-up</a></td>

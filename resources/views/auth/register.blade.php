@@ -53,11 +53,11 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
-                            <label for="title" class="col-md-4 control-label">Title</label>
+                            <label for="title" class="col-md-4 control-label">Choose Title</label>
 
                             <div class="col-md-6">
-                                <select id="title" class="form-control" name="title" value="{{ old('title') }}" required autofocus>
-                                   <option value="">Choose Tittle: </option>
+                                <select id="title" class="form-control" name="title" required autofocus>
+                                   <option value="{{ old('title') }}">{{ old('title') }}</option>
                                    <option value="HFA">HFA</option>
                                    <option value="PFA">PFA</option>
                                    <option value="DGM">DGM</option>
@@ -77,11 +77,11 @@
 
 
                         <div class="form-group{{ $errors->has('branch_name') ? ' has-error' : '' }}">
-                            <label for="branch_name" class="col-md-4 control-label">Branch Name</label>
+                            <label for="branch_name" class="col-md-4 control-label">Choose Branch Name</label>
 
                             <div class="col-md-6">
                                 <select id="branch_name" class="form-control" name="branch_name" value="{{ old('branch_name') }}" required autofocus>
-                                   <option value="">Choose Branch</option>
+                                   <option value="{{ old('branch_name') }}">{{ old('branch_name') }}</option>
                                     @foreach($list_branches as $list)
                                     <option value="{{ $list->branch_id }}">{{ $list->b_name }}</option>
                                     @endforeach

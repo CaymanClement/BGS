@@ -3,7 +3,7 @@
 
             <div class="container">
                 <div class="row">
-
+<br>
                               @if (session('success'))
                              <div class="alert alert-success alert-dismissable">
                               <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -34,21 +34,7 @@
                               <h4>Approvals:</h4>
 
                               <div class="row">
-                      <!--        <div class="col-lg-4">
-                              <table class="table table-striped">
-                                    <thead>
-                                      <tr>
-                                        <th>Category:</th>
-                                       </tr>
-                                   </thead>
-                                   <tbody>
-                                       <tr><td>Reviewed by:</td></tr>
-                                       <tr><td>Recommended for budget by:</td></tr>
-                                       <tr><td>Recommended for activity by:</td></tr>
-                                       <tr><td>Approved by:</td></tr>
-                                   </tbody>
-                               </table>
-                           </div> -->
+            
 
                         <div class="col-lg-12">
                                   <table class="table table-striped">
@@ -142,30 +128,36 @@
 
                               <div class="form-group">
                                             <div class="col-md-12">
-                                                <br>
+ 
+                                               <br>
                              
                                                 <button type="submit" class="btn btn-success btn-block">
                                                     Approve Request
                                                 </button>
-                               
 
-                                                <br>
-                                                @if(Auth::user()->title ==  'PFA')
-                                                <a href="#" class="btn btn-warning btn-block disabled" disabled>Return Request</a>
+
+
+                                               <br>
+                                               <button data-toggle="modal" data-target="#rejectModal" class="btn btn-danger btn-block" type="reset">Reject Request</button>
+                                               <br>
+
+                                                 @if(Auth::user()->title ==  'PFA')
+                                                <button class="btn btn-primary btn-block disabled">Return Request</button>
                                                 @else
-                                               <button class="btn btn-warning btn-block" data-toggle="modal" data-target="#myModal">Return Request</button>
+                                               <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal" type="reset">Return Request</button>
                                                @endif
+                                               <br>
 
-                                               <br>
-                                               <button data-toggle="modal" data-target="#rejectModal" class="btn btn-danger btn-block" >Reject Request</button>
-                                               <br>
                                                <a href="/approver/requests/follow-up/32789{{ $show_budget_details->budget_id }}43789721/edit" class="btn btn-warning btn-block">Edit Details</a>
                                               <br>
-                                              <a href="/approver/view/32789{{ $show_budget_details->budget_id }}43789721" class="btn btn-default btn-block">View</a>
+  <a href="/approver/view/32789{{ $show_budget_details->budget_id }}43789721" class="btn btn-default btn-block">View</a>
 
+
+                                            
+ </form>
                                             </div>
                                         </div>                              
-                                 </form>
+                                
 
                     <!-- Modal for return-->
                         <div class="modal fade" id="myModal" role="dialog">

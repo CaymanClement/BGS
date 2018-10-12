@@ -12,6 +12,7 @@ use App\User;
 use Illuminate\Support\Facades\Input;
 use App\admin;
 use App\graph;
+use Auth;
 
 use App\Mail\ApprovedMail;
 use Illuminate\Support\Facades\Mail;
@@ -28,7 +29,8 @@ class AdminController extends Controller
 
     public function users()
     {
-        $admins = admin::all();
+        $admins = DB::table('branches')->join('users', 'users.branch_id_', '=', 'branches.branch_id')->orderBy('users.updated_at', 'DESC')->get();
+
         return view('admin.users')->with('admins', $admins);
     }
 
@@ -43,7 +45,7 @@ class AdminController extends Controller
     //Load the page and pass the data
     return view('admin.dash', compact('amount'));
 
-    }
+    } 
 
     public function create_user(){
 
@@ -89,30 +91,34 @@ class AdminController extends Controller
 
     public function edit($id)
     {
+       $list_branches =  DB::table('branches')->get();
+
+       $user =  DB::table('users')->where('id', $id)->first();
+
+        $branch =  DB::table('branches')->where('branch_id', $user->branch_id_ )->first();
 
         $admin = admin::find($id);
-        return view('admin.edit')->with('admin', $admin);
+        return view('admin.edit', compact('admin', 'list_branches','branch'));
     }
 
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'id' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-            'title' => 'required',
-            'branch_id_' => 'required',
-            'password' => 'required',
+            'password' => 'required|confirmed',
             ]);
 
             // creation
-            $admin = admin::find($id);
-            $admin->name = $request->input('name');
-            $admin->email = $request->input('email');
-            $admin->password = $request->input('password');
-            $admin->title = $request->input('title');
-            $admin->branch_id_ = $request->input('branch_id_');
+            $admin = User::where('id',$id)->first();
+            $admin->name =   Input::get('name');
+            $admin->email =  Input::get('email');
+            $admin->branch_id_ =  Input::get('branch_name');
+            $admin->password =  bcrypt(Input::get('password'));
+            $admin->title =  Input::get('title');
+            $admin->status = 'created';
             $admin->save();   
+
+return redirect('/admin/users')->with('success','User Updated Successfully');
+
     }
 
     public function destroy($id)
@@ -138,6 +144,30 @@ class AdminController extends Controller
     public function reports()
     {
         return view('admin.reports');
+    }
+
+
+    public function change_password()
+    {
+        return view('auth.passwords.change_password');
+    }
+
+    public function change_password_post(Request $request)
+    {
+         $this->validate($request, [
+            'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,10}$/',
+         ]);  
+
+        $user = User::where('id', Auth::user()->id )->first();
+        $user->username = Auth::user()->username;
+        $user->name = Auth::user()->name;
+        $user->password =  bcrypt(Input::get('password'));
+        $user->status = 'Active';
+        $user->save();
+        Auth::logout();
+
+
+        return redirect('/login')->with('success','Password Changed Successfully Login to Continue');
     }
 
 }

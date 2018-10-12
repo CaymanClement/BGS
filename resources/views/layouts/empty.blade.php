@@ -24,9 +24,9 @@
         ]); ?>
     </script>
 </head>
-<body style="background:url(/img/bg.jpg); background-size:cover;">
+<body style="background:url(/img/bg.jpg); background-size:cover;" style="background:url(/img/slide-02.jpg); background-size:cover; color: white;">
     <div id="app">
-        <nav class="navbar navbar-default navbar-fixed-top" style="background:url(/img/slide-02.jpg); background-size:cover; color: white;">
+        <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
 
@@ -51,48 +51,15 @@
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-                                <ul class="nav navbar-nav navbar-right">
-                                    <!-- Authentication Links -->
-                                    @if (Auth::guest())
-                                        <li><a href="{{ url('/login') }}">Login</a></li>
 
-                                        @else
-
-                                          <li class="hover" ><a style="color: white;" href="/approver">Dashboard</a></li>
-                                          <li class="hover" ><a style="color: white;" href="/approver/requests">Budget Requests</a></li>
-                                          <li class="hover" ><a style="color: white;" href="/approver/settle">Settle Business (Remarks)</a></li>
-                                          <li class="hover" ><a style="color: white;" href="/approver/reports">Reports</a></li>
-
-                                      <li class="dropdown">
-                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white;"><i>Logged in as {{ Auth::user()->name }}</i>
-                                        <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                          <li><a href="/change-password">Changed Password</a></li>
-                                      </ul>
-                                      </li>
-
-
-                                      <li class="hover" style="background: red;"><a style="color: white;"  href="{{ url('/logout') }}"
-                                                onclick="event.preventDefault();
-                                                         document.getElementById('logout-form').submit();">
-                                                Logout
-                                            </a>
-
-                                            <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
-                                                {{ csrf_field() }}
-                                            </form>
-                                      </li>
-
-                                </ul>
                             </li>
-                        @endif
+                    
                         
                     </ul>
                 </div>
             </div>
         </nav>
 <br><br><br>
-
 <div class = "container">
         @yield('content')</div>
     </div>
@@ -117,8 +84,7 @@
     $('#clemtable').DataTable();
 } );
 </script>
-<script src="{{ asset('Datatables/tables/datatables.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('DataTables/tables/datatables.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('JQUERY/js/jquery-3.2.1.min.js') }}" type="text/javascript"></script>
-
 </body>
 </html>

@@ -5,8 +5,8 @@
 <div class="container">
     <div class="row">
    
-            <div class="panel panel-primary">
-                <div class="panel-heading"><b>Follow up: </b>Budget Request Details</div>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background:url(/img/bg2.jpg); background-size:cover; color: white;"><b>Follow up: </b>Budget Request Details</div>
 
                 <div class="panel-body">
 
@@ -49,11 +49,11 @@
 
                             <tr><td>Total Cost</td><td>{{ $show->market_cost+$show->travelling_cost+$show->fuel_cost+$show->postage_cost+$show->fax_cost }}</td></tr>  
 @if( $show->business_status == 'Not settled' && $show->budget_status=='Approved' && $remarks_details>'1')
-                            <tr><td>Settle Business</td><td><a href="/requests/follow-up/32789{{ $total->budget_id }}43789721/settle" class="btn btn-primary btn-block">Settle Business</a></td></tr>
+                            <tr><td>Settle Business</td><td><a href="/requests/follow-up/32789{{ $total->budget_id }}43789721/settle" class="btn btn-success btn-block">Settle Business</a></td></tr>
 @elseif( $show->business_status == 'Pushed Forward' && $show->budget_status=='Approved' && $remarks_details>'1')
-                            <tr><td>Settle Business</td><td><a href="/requests/follow-up/32789{{ $total->budget_id }}43789721/settle" class="btn btn-primary btn-block">Settle Business</a></td></tr>
+                            <tr><td>Settle Business</td><td><a href="/requests/follow-up/32789{{ $total->budget_id }}43789721/settle" class="btn btn-success btn-block">Settle Business</a></td></tr>
 @else
-                            <tr><td>Settle Business</td><td><a href="#" class="btn btn-primary btn-block disabled">Settle Business</a></td></tr>
+                            <tr><td>Settle Business</td><td><button class="btn btn-success btn-block disabled">Settle Business</button></td></tr>
 @endif
 
 @if( $show->budget_status =='created' && $show_status == 0 )
@@ -134,7 +134,7 @@
 
                         <div class="form-group">
                             <div class="col-md-10 col-md-offset-2">
-                                <button type="submit" class="btn btn-primary btn-block disabled" disabled>
+                                <button type="submit" class="btn btn-success btn-block disabled" disabled>
                                     Submit Remarks
                                 </button>
                             </div>
@@ -219,7 +219,7 @@
 
                         <div class="form-group">
                             <div class="col-md-10 col-md-offset-2">
-                                <button type="submit" class="btn btn-primary btn-block">
+                                <button type="submit" class="btn btn-success btn-block">
                                     Submit Remarks
                                 </button>
                             </div>

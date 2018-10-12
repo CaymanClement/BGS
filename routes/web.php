@@ -22,7 +22,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
-Route::get('/add', 'HomeController@add');
+Route::post('/add', 'HomeController@add_validate');
+Route::get('/add-view', 'HomeController@add');
 Route::post('/add/post', 'HomeController@add_post');
 Route::get('/requests', 'HomeController@requests');
 Route::get('/report', 'HomeController@reports');
@@ -64,7 +65,12 @@ Route::get('/admin', 'AdminController@home');
 //Route::resource('/create-user-post', 'AdminController@store');
 
 Route::get('/admin/register-user', 'AdminController@create_user');
-Route::resource('admin/users', 'AdminController@users');
+Route::get('admin/users', 'AdminController@users');
+Route::get('admin/{id}/edit', 'AdminController@edit');
+Route::post('admin/{id}/edit/post', 'AdminController@update');
+Route::post('admin/{id}/user/delete', 'AdminController@destroy');
+
+
 Route::get('/admin/limits', 'LimitsController@index');
 Route::get('/admin/reports', 'AdminController@reports');
 Route::get('/admin/reports', 'AdminController@reports');
@@ -80,8 +86,11 @@ Route::get('/view-file-738283873764671737{id}93624163535261', 'HomeController@do
 
 
 Route::get('/change-password', 'AdminController@change_password');
+Route::post('/change-password/go', 'AdminController@change_password_post');
 
-
+Route::get('/error',function () {
+    return view('errors.blocked');
+});
 
 Route::get('/mail',function () {
     

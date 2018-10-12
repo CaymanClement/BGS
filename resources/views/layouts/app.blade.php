@@ -26,7 +26,7 @@
 </head>
 <body style="background:url(/img/bg.jpg); background-size:cover;">
     <div id="app">
-        <nav class="navbar navbar-default navbar-static-top">
+        <nav class="navbar navbar-default navbar-fixed-top" style="background:url(/img/slide-02.jpg); background-size:cover; color: white;">
             <div class="container">
                 <div class="navbar-header">
 
@@ -40,7 +40,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="#">
-                        ACTIVITY PLANNER
+                        <img src="{{ asset('img/logo.png') }}" height="30" width="130" alt="ACTIVITY PLANNER">
                     </a>
                 </div>
 
@@ -54,24 +54,48 @@
                                 <ul class="nav navbar-nav navbar-right">
                                     <!-- Authentication Links -->
                                     @if (Auth::guest())
-                                        <li><a href="{{ url('/login') }}">Login</a></li>
+                                        <li class="hover" ><a style="color: white;" href="{{ url('/login') }}">Login</a></li>
 
                                         @else
 
-                                          <li><a href="/home")">Dashboard</a></li>
-                                          <li><a href="/add" >Add Request</a></li>
-                                          <li><a href="/requests">My Requests</a></li>
-                                          <li><a href="/report" >Reports</a></li>
-                                        <li>
+                                      <li class="hover" ><a style="color: white;" href="/home")">Dashboard</a></li>
+                                          
+                                      <li class="hover"><a style="color: white;"  href=""
+                                                onclick="event.preventDefault();
+                                                         document.getElementById('add-form').submit();">
+                                                Add Request
+                                            </a>
 
-                                            <a href="#"><i>Logged in as
-                                                {{ Auth::user()->name }}
-                                            </i></a>
-                                        </li>
+                                            <form id="add-form" action="{{ url('/add') }}" method="POST" style="display: none;">
+                                                {{ csrf_field() }}
+                                            </form>
+                                      </li>
 
 
-                                      <li>
-                                            <a href="{{ url('/logout') }}"
+
+
+                                          <li class="hover" >
+                                            <form action="/add" method="POST">
+                                                {{ csrf_field() }}
+
+                                                <button type="submit" name="submit" style="display: none;"><p style="color: white;">Add Request</p></button>
+
+                                            </form>
+                                          </li>
+                                          <li class="hover" ><a style="color: white;" href="/requests">My Requests</a></li>
+                                          <li class="hover" ><a style="color: white;" href="/report" >Reports</a></li>
+
+
+                                      <li class="dropdown">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white;"><i>Logged in as {{ Auth::user()->name }}</i>
+                                        <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                          <li><a href="/change-password">Changed Password</a></li>
+                                      </ul>
+                                      </li>
+
+
+                                      <li class="hover" style="background: red;"><a style="color: white;"  href="{{ url('/logout') }}"
                                                 onclick="event.preventDefault();
                                                          document.getElementById('logout-form').submit();">
                                                 Logout
@@ -90,6 +114,7 @@
                 </div>
             </div>
         </nav>
+<br><br><br>
 <div class = "container">
         @yield('content')</div>
     </div>

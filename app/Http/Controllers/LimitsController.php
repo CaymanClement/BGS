@@ -148,6 +148,19 @@ class LimitsController extends Controller
     DB::table('limits')->update(['updated_at' => Carbon::now() ]);
 
 
+    DB::table('old_limits')->update(['market_cost' => '0' ]);
+
+    DB::table('old_limits')->update(['travelling_cost' => '0' ]);
+
+    DB::table('old_limits')->update(['fuel_cost' => '0' ]);     
+
+    DB::table('old_limits')->update(['postage_cost' => '0' ]);
+
+    DB::table('old_limits')->update(['fax_cost' => '0' ]);
+
+    DB::table('old_limits')->update(['updated_at' => Carbon::now() ]);
+
+
     return redirect()->back()->with('success', 'Amount Limits Reset Successfully');
          
     

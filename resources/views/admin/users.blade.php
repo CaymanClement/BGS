@@ -31,7 +31,7 @@
 
 <a href="/admin/register-user" class="btn btn-success btn-block">Create User</a><br>
 
-<table id="clemtable" class="table">
+<table id="clemtable" class="table table-striped">
     <tr>
         <th>Name</th>
         <th>User ID</th>
@@ -39,8 +39,9 @@
         <th>Title</th>
         <th>Branch ID</th>
         <th>Status</th>
+        <th>Created At</th>
 
-        <th>Edit</th>
+        <th>Update</th>
         
     </tr>
     @foreach($admins as $admin)
@@ -49,8 +50,9 @@
     <td>{!!$admin->username!!}</td>
     <td>{!!$admin->email!!}</td>
     <td>{!!$admin->title!!}</td>
-    <td>{!!$admin->branch_id_!!}</td>
+    <td>{!!$admin->b_name!!}</td>
     <td>{!!$admin->status!!}</td>
+    <td>{!!$admin->created_at!!}</td>
 
     <td><a href="/admin/{{$admin->id}}/edit" class="btn btn-success btn-block">Edit</a></td>
 

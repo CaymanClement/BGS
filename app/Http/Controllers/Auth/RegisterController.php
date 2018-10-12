@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\limit;
+use App\Models\BlimitModel;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -54,11 +55,9 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required',
-            /*'username' => 'required|max:255',
+            'name' => 'required|unique:users',
+            'username' => 'required|max:255|unique:users',
             'email' => 'required|email|max:255|unique:users',
-            'title' => 'required',
-            'branch_name_' => 'required', */
             'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,10}$/',
         ]);
     }
@@ -88,7 +87,7 @@ class RegisterController extends Controller
 
    
 
-        return limit::create([
+            limit::create([
             'user_id' => $CreatedUser->id,
             'market_cost' => $limits_admin->market_cost,
             'travelling_cost'     =>  $limits_admin->travelling_cost,
@@ -98,6 +97,18 @@ class RegisterController extends Controller
             'created_at'     =>   Carbon::now(),
             'updated_at'     =>  Carbon::now(),
         ]);
+
+        return BlimitModel::create([
+            'user_id' => $CreatedUser->id,
+            'market_cost' => '0',
+            'travelling_cost'     =>  '0',
+            'fuel_cost'     => '0',
+            'postage_cost'     =>  '0',
+            'fax_cost'     =>  '0',
+            'created_at'     =>   Carbon::now(),
+            'updated_at'     =>  Carbon::now(),
+        ]);
+
 
 /*
     return DB::table('limits')->insert( array(

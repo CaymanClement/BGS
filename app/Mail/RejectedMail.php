@@ -31,6 +31,7 @@ class RejectedMail extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.reject')
+        ->with('prev_approved', Auth::user()->name);
     }
 }

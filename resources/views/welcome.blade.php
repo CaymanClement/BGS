@@ -5,7 +5,6 @@
     <title>Activity Planner| CIB</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="http://simonewebdesign.it">
 
     <!-- Le styles -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -48,33 +47,37 @@
     ================================================== -->
     <div id="myCarousel" class="carousel slide">
       <div class="carousel-inner">
-        <div class="item active">
-          <img src="/img/slide-01.jpg" alt="">
+ 
+
+        <div class="item">
+           <img src="/img/slide-01.jpg" alt="">
           <div class="container">
             <div class="carousel-caption">
               <h1>Activity Planner</h1>
-              <p class="lead">The most effective way to keep your business - and its finances - on track</p>
+              <p class="lead">The most effective way to keep your business - and its finances - on track.</p>
               <a class="btn btn-large btn-primary" href="/login">Login</a>
             </div>
           </div>
+
         </div>
-        <div class="item">
-          <img src="/img/slide-02.jpg" alt="">
+
+        <div class="item active">
+<img src="{{ asset('img/logo.png') }}" height="30" width="130" alt="ACTIVITY PLANNER">
+         
           <div class="container">
             <div class="carousel-caption">
-              <h1>Activity Planner</h1>
-              <p class="lead">Software is designed to simplify and streamline the budgeting process, a process that is typically a tedious and time consuming exercise whereby the resulting annual budget is often put aside and not looked at until the following year when a new budget needs to be created.</p>
-              <a class="btn btn-large btn-primary" href="#">Learn more</a>
             </div>
           </div>
         </div>
+
+
         <div class="item">
           <img src="/img/slide-03.jpg" alt="">
           <div class="container">
             <div class="carousel-caption">
               <h1>Activity Planner</h1>
               <p class="lead">The budgeting process forces management to think about why the company is in business, as well as its key assumptions about its business environment.</p>
-              <a class="btn btn-large btn-primary" href="#">Browse gallery</a>
+              <a class="btn btn-large btn-primary" href="/login">Login</a>
             </div>
           </div>
         </div>
