@@ -26,7 +26,7 @@
 </head>
 <body style="background:url(/img/bg.jpg); background-size:cover;" style="background:url(/img/slide-02.jpg); background-size:cover; color: white;">
     <div id="app">
-        <nav class="navbar navbar-default navbar-fixed-top">
+        <nav class="navbar navbar-default navbar-fixed-top" style="background:url(/img/slide-02.jpg); background-size:cover; color: white;">
             <div class="container">
                 <div class="navbar-header">
 
@@ -39,7 +39,7 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="#"> 
                         <img src="{{ asset('img/logo.png') }}" height="30" width="130" alt="ACTIVITY PLANNER">
                     </a>
                 </div>
@@ -51,9 +51,9 @@
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-
-                            </li>
-                    
+                    <ul class="nav navbar-nav navbar-right">
+                           
+<li style="background: white;"><a style="color: black;" href="{{ url('/login') }}">Login</a></li>
                         
                     </ul>
                 </div>
@@ -61,9 +61,12 @@
         </nav>
 <br><br><br>
 <div class = "container">
-        @yield('content')</div>
+        @yield('content')
+        <br>
     </div>
-
+<footer class="navbar-fixed-bottom" style="background-color: #003300; color: white; text-align: center; height: 20px; opacity: 0.8;">
+    <p>CRDB INSUARANCE BROKER © 2018</p>
+</footer>
     <!-- Scripts -->
     <script src="/js/app.js"></script>
 

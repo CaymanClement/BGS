@@ -90,6 +90,7 @@
                                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white;"><i>Logged in as {{ Auth::user()->name }}</i>
                                         <span class="caret"></span></a>
                                         <ul class="dropdown-menu">
+                                            <p style="color: black;" align="center"><b>Balance:</b>{{Auth::user()->balance }}</p>
                                           <li><a href="/change-password">Changed Password</a></li>
                                       </ul>
                                       </li>
@@ -116,9 +117,13 @@
         </nav>
 <br><br><br>
 <div class = "container">
-        @yield('content')</div>
+        @yield('content')
+        <br>
     </div>
 
+<footer class="navbar-fixed-bottom" style="background-color: #003300; color: white; text-align: center; height: 20px; opacity: 0.8;">
+    <p>CRDB INSUARANCE BROKER © 2018</p>
+</footer>
     <!-- Scripts -->
     <script src="/js/app.js"></script>
 

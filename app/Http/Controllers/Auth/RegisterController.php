@@ -77,6 +77,7 @@ class RegisterController extends Controller
             'title' => $data['title'],
             'branch_id_' => $data['branch_name'],
             'status' => 'created',
+            'balance' => '0',
             'password' => bcrypt($data['password']),
         ]);
 

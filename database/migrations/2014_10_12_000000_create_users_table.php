@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('username')->unique();
             $table->string('title');
+            $table->integer('balance')->default('0');
 $table->integer('branch_id_')->unsigned()->index()->references('branch_id')->on('branches')->onUpdate('cascade')->onDelete('restrict');
             $table->string('status')->default('created');
             $table->string('password');

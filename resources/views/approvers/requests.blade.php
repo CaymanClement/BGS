@@ -38,6 +38,7 @@
                             <th>Total Cost</th>
                             <th>Budget Status</th>
                             <th>Approve</th>
+                            <th>Details</th>
                             <th>View</th>
                           </tr>
                         </thead>
@@ -64,6 +65,7 @@
                             <td><a href="/approve/329382329383293823983238{{ $requests->budget_id }}874393239328923982378923782739237" class="btn btn-success">Approve</a></td>
                             @endif
                             <td> <a href="/view-file-738283873764671737{{ $requests->budget_id }}93624163535261" class="btn btn-warning">View File</a></td>
+                            <td><a href="/approver/view/32789{{ $requests->budget_id }}43789721" class="btn btn-default">Details</a></td>
                           </tr>
                           @endforeach
    

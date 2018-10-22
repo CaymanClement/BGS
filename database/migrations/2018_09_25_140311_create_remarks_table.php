@@ -17,13 +17,11 @@ class CreateRemarksTable extends Migration
             $table->increments('remark_id')->unsigned()->index(); 
             $table->integer('budget_id')->unsigned()->index()->references('budget_id')->on('budget')->onUpdate('cascade')->onDelete('restrict');
             $table->integer('actual_cost')->default('0');
-            $table->date('expected_action_date');
-            $table->date('push_forward_date')->nullable();
-            $table->string('remarks');
             $table->string('final_remarks')->nullable();
-            $table->string('reason')->nullable();
             $table->string('reviewer')->nullable();
-            $table->string('remark_status')->default('Remark Submited');
+            $table->string('reviewer2')->nullable();
+            $table->string('reviewer3')->nullable();
+            $table->string('remark_status')->default('Remark Submitted');
             $table->timestamps();
             });
 

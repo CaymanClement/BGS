@@ -4,6 +4,13 @@
             <div class="container">
                 <div class="row">
 <br>
+                             
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"  style="background:url(/img/bg2.jpg); background-size:cover; color: white;">Approve User's Budget Request</div>
+
+                            <div class="panel-body">
+
                               @if (session('success'))
                              <div class="alert alert-success alert-dismissable">
                               <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -20,12 +27,9 @@
                                 {{ session('warning') }}
                              </div>
                              @endif
-                             
-                    <div class="col-md-8 col-md-offset-2">
-                        <div class="panel panel-default">
-                            <div class="panel-heading"  style="background:url(/img/bg2.jpg); background-size:cover; color: white;">Approve User's Budget Request</div>
 
-                            <div class="panel-body">
+
+                              
                               <p><b>Name: </b> {{ $name->name }} - {{ $name->title }}</p>
                               <p><b>Location: </b> {{ $branch->b_name }} -- {{ $branch->b_region }} -- {{ $branch->b_zone }}</p>
                               <p><b>Total Cost: </b> {{ $total->total_cost }} </p>
@@ -85,8 +89,10 @@
                             </div>
                         </div>
 
+@if(Auth::user()->title == 'GM')
+@else
                         <div class="form-group{{ $errors->has('reviewer') ? ' has-error' : '' }}">
-                            <label for="reviewer" class="col-md-4 control-label">Forward To / Return To: </label>
+                            <label for="reviewer" class="col-md-4 control-label">Forward To: </label>
 
                             <div class="col-md-6">
                                  <select name="reviewer" class="form-control" value="{{ old('reviewer') }}" id="reviewer" required autofocus>
@@ -104,7 +110,6 @@
                                     @endforeach
 
                                     @elseif(Auth::user()->title == 'DGM')
-                                    <option value="">None</option>
                                     @foreach($reviewer_list_3 as $reviewer)
                                     <option value="{{ $reviewer->email }}">{{ $reviewer->name }} - {{ $reviewer->title }}</option>
                                     @endforeach
@@ -124,7 +129,9 @@
                                     </span>
                                 @endif
                             </div>
-                        </div>
+                             </div>
+@endif                            
+                       
 
                               <div class="form-group">
                                             <div class="col-md-12">
@@ -142,21 +149,23 @@
                                                <br>
 
                                                  @if(Auth::user()->title ==  'PFA')
-                                                <button class="btn btn-primary btn-block disabled">Return Request</button>
+                                                <button type="reset" class="btn btn-primary btn-block disabled">Return Request</button>
                                                 @else
                                                <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal" type="reset">Return Request</button>
                                                @endif
+                                               @if(Auth::user()->title == 'DGM')
+                                               @else
                                                <br>
-
                                                <a href="/approver/requests/follow-up/32789{{ $show_budget_details->budget_id }}43789721/edit" class="btn btn-warning btn-block">Edit Details</a>
+                                               @endif
                                               <br>
   <a href="/approver/view/32789{{ $show_budget_details->budget_id }}43789721" class="btn btn-default btn-block">View</a>
 
-
+ </div>
+</div>
                                             
  </form>
-                                            </div>
-                                        </div>                              
+                                                                      
                                 
 
                     <!-- Modal for return-->
@@ -191,8 +200,18 @@
                             <label for="reviewer" class="col-md-4 control-label">Return To: </label>
 
                             <div class="col-md-6">
-                                 <select name="reviewer" class="form-control" value="{{ old('reviewer') }}" id="reviewer" required autofocus>
+                             
+                                   @if(Auth::user()->title == 'GM')
+
+                                    <input type="checkbox" value="{{ $reviewer1->email }}" name="reviewer1"> {{ $reviewer1->name }} - {{ $reviewer1->title }} <br>
+                                    <input type="checkbox" value="{{ $reviewer2->email }}" name="reviewer2"> {{ $reviewer2->name }} - {{ $reviewer2->title }} <br>
+                                    <input type="checkbox" value="{{ $reviewer3->email }}" name="reviewer3"> {{ $reviewer3->name }} - {{ $reviewer3->title }} <br>
+
+                                    @else
+
+                                 <select name="reviewer" class="form-control" value="{{ old('reviewer') }}" id="reviewer"  required autofocus>
                                    <option value="">Choose Reviewer: </option>
+
                                    @if( Auth::user()->title == 'HFA')
                                    
                                     @foreach($reviewer_list_2r as $reviewer)
@@ -205,12 +224,6 @@
                                     <option value="{{ $reviewer->email }}">{{ $reviewer->name }} - {{ $reviewer->title }}</option>
                                     @endforeach
 
-                                    @elseif(Auth::user()->title == 'GM')
-
-                                    @foreach($reviewer_list_4r as $reviewer)
-                                    <option value="{{ $reviewer->email }}">{{ $reviewer->name }} - {{ $reviewer->title }}</option>
-                                    @endforeach
-
                                     @else
 
                                    <option value="">None</option>
@@ -219,6 +232,7 @@
 
 
                                  </select>
+                                 @endif
                                 
                                 @if ($errors->has('reviewer'))
                                     <span class="help-block">
@@ -280,15 +294,11 @@
                             </div>
                             </div>
                         </div>
+                   </div>
 
-
-
-
-
-                            </div>
+                 </div>
                         </div>
                     </div>
                 </div>
             </div>
-
 @endsection

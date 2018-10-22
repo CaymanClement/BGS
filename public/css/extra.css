@@ -61,3 +61,50 @@
     background-color: #004d00;
     color: white;
 }
+
+
+/* for card  */
+
+.card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    background-color: #004d00;
+    color: white;
+    
+}
+
+/* Add some padding inside the card container */
+.container {
+    padding: 2px 16px;
+}
+
+
+.footer {
+   
+    left: 0;
+    bottom: 0;
+    position: relative;
+    height: 50px;
+    width: 100%;
+    background-color: #003300;
+    color: white;
+    text-align: center;
+}
+
+ @font-face {
+    font-family: 'HUM777Blt';
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+    src: url("/fonts/HUM777Blt.ttf") format("truetype");
+  }
+  body {
+    font-family: HUM777Blt, sans-serif;
+  }

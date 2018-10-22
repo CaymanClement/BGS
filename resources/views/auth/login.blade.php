@@ -88,7 +88,7 @@
                 </div>
             </div>
 <br>
-<p align="center">  <img src="{{ asset('img/logo.png') }}" height="130" width="520" alt="ACTIVITY PLANNER"></p>
+<p align="center" style="opacity: 0.5;">  <img src="{{ asset('img/logo.png') }}" height="130" width="520" alt="ACTIVITY PLANNER"></p><br><br><br>
 
         </div>
     </div>

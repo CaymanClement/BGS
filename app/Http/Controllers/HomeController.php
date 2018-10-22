@@ -8,6 +8,7 @@ use Auth;
 use Hash;
 use Carbon\Carbon;
 use App\User;
+use App\FileModel; //testing
 use App\limit;
 use App\Models\ApprovalsModel;
 use App\Models\BudgetModel;
@@ -15,6 +16,7 @@ use App\Models\RemarksModel;
 use App\Models\BalanceModel;
 use App\Models\UpdatesModel;
 use App\Models\BlimitModel;
+use App\Models\ImplementationModel;
 use App\graph;
 use Illuminate\Support\Facades\Input;
 
@@ -25,8 +27,15 @@ use Response;
 use App\Mail\ApprovedMail;
 use App\Mail\ApproveBudgetMail;
 use App\Mail\RejectedMail;
+use App\Mail\RemarkSubmittedMail;
 use App\Mail\ReturnedMail;
 use Illuminate\Support\Facades\Mail;
+
+//for file ---------------------
+use Session;
+use Excel;
+//--------------------------------
+
 
 
 class HomeController extends Controller
@@ -59,6 +68,9 @@ class HomeController extends Controller
 
         $balance = DB::table('balance')->join('budget', 'balance.budget_id', '=' , 'budget.budget_id')->where('budget.user_id', Auth::user()->id)->select('*')->orderBy('budget.updated_at', 'desc')->first();
 
+        $limits = DB::table('limits')->where('user_id', Auth::user()->id)->first();
+
+        $balancey = $limits->market_cost+$limits->travelling_cost+$limits->fuel_cost+$limits->fax_cost+$limits->postage_cost;
 
         if($balance1<1){
         $balance = new BalanceModel;
@@ -66,8 +78,16 @@ class HomeController extends Controller
          return view('home', compact('balance','amount'));
         }
 
+        $count_unsettled = DB::table('budget')->where('user_id', Auth::user()->id )->where('budget_status','=','Approved')->count();
 
-        return view('home', compact('balance','amount'));
+        $count_unsettled_activities = DB::table('implementation')->join('budget', 'budget.budget_id', '=', 'implementation.budget_id')->join('users', 'budget.user_id', '=', 'users.id')->where('implementation.status', '=', 'Not Settled')->where('budget.user_id', Auth::user()->id )->count();
+
+        $count_pushed = DB::table('implementation')->join('budget', 'budget.budget_id', '=', 'implementation.budget_id')->join('users', 'budget.user_id', '=', 'users.id')->where('implementation.status', '=', 'Pushed Forward')->where('budget.user_id', Auth::user()->id )->count();
+
+        $count_unapproved = DB::table('budget')->where('user_id', Auth::user()->id )->where('budget_status','!=','Approved')->count();
+
+
+        return view('home', compact('balance','amount','count_pushed','count_unsettled','count_unsettled_activities', 'count_unapproved','balancey'));
     }
 
     public function add()
@@ -110,7 +130,7 @@ class HomeController extends Controller
             'fuel_cost' =>'required|numeric',
             'postage_cost' => 'required|numeric',
             'fax_cost' => 'required|numeric',
-            'expected_premium' => 'required|numeric'
+            'expected_premium' => 'required|numeric',
          ]);  
 
 
@@ -155,15 +175,20 @@ class HomeController extends Controller
   $balance_count = DB::table('balance')->join('budget', 'balance.budget_id', '=' , 'budget.budget_id')->where('budget.user_id', Auth::user()->id)->select('balance_id')->orderBy('budget.updated_at', 'desc')->groupBy('balance.budget_id')->count();
 
 
-            if(Input::get('month')=='January' || Input::get('month')=='February' || Input::get('month')=='March'){
-
 //store file
 
-$file = $request['file_uploaded'];
+$file = $request['file'];
 $mime = $file->getClientOriginalExtension();
 $now = Carbon::now();
 $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
 $file->storeAs('\files',$filename_renamed);
+
+if($mime != 'xls'){
+        return redirect()->back()->withInput(Input::all())->with('failure','Please check File Format. Only Excel "xls" format allowed');
+}
+
+
+   if(Input::get('month')=='January' || Input::get('month')=='February' || Input::get('month')=='March'){
 
 
     DB::table('budget')->insert( array(
@@ -193,14 +218,14 @@ $file->storeAs('\files',$filename_renamed);
 
 
         elseif(Input::get('month')=='April' || Input::get('month')=='May' || Input::get('month')=='June'){
-
-        $file = $request['file_uploaded'];
+/*
+        $file = $request['file'];
         $mime = $file->getClientOriginalExtension();
         $now = Carbon::now();
         $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
         $file->storeAs('\files',$filename_renamed);
 
-
+*/
 
         DB::table('budget')->insert( array(
 
@@ -224,14 +249,14 @@ $file->storeAs('\files',$filename_renamed);
             'quarter' => '2'   ));
             }
             elseif(Input::get('month')=='July' || Input::get('month')=='August' || Input::get('month')=='September'){
-
-        $file = $request['file_uploaded'];
+/*
+        $file = $request['file'];
         $mime = $file->getClientOriginalExtension();
         $now = Carbon::now();
         $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
         $file->storeAs('\files',$filename_renamed);
 
-
+*/
 
         DB::table('budget')->insert( array(
 
@@ -255,14 +280,14 @@ $file->storeAs('\files',$filename_renamed);
             'quarter' => '3'   ));
             }
             else{
-
-        $file = $request['file_uploaded'];
+/*
+        $file = $request['file'];
         $mime = $file->getClientOriginalExtension();
         $now = Carbon::now();
         $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
         $file->storeAs('\files',$filename_renamed);
 
-
+*/
 
         DB::table('budget')->insert( array(
 
@@ -333,6 +358,7 @@ $total =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get('fu
             'updated_at'     =>  Carbon::now(),
         ));
 }
+
 else{
 $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get('fuel_cost')+Input::get('postage_cost')+Input::get('fax_cost');
 
@@ -345,7 +371,7 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         ));
 }
 
-
+//Update Limits
         $limits = limit::where('user_id', Auth::user()->id )->first();
         $limits->market_cost = $limits->market_cost-Input::get('market_cost');
         $limits->travelling_cost = $limits->travelling_cost-Input::get('travelling_cost');
@@ -354,392 +380,38 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $limits->postage_cost = $limits->postage_cost-Input::get('postage_cost');
         $limits->save();
 
+//Enter data from file to DB
 
- 
+$mime = $file->getClientOriginalExtension();
+$path = $request->file->getRealPath();
+$results=Excel::load($path)->get();
+
+foreach ($results as $rows) {
+foreach ($rows as $row) {
+
+    if($row->date == ''){
+         
     return redirect('/requests')->with('success', 'Budget Submitted Successfully!');
 
     }
 
+    ImplementationModel::create([
+        'budget_id' => $created_id,
+        'date_of_visit'  => $row->date,
+        'activities'  => $row->activities, 
+        'place'  => $row->place,
+        'total_cost'  => $row->total,
+        'description'  => $row->description,
+        'expected_premium'  => $row->expected_premium,
+        'bgen_date'  => $row->business_generation_date,
+    ]);
+ }
+ }
 
-
-
-
-    public function approve($id)
-    {
-        $reviewer_list_1 = DB::table('users')->where( 'title','=','HFA' )->get();
-        $reviewer_list_2 = DB::table('users')->where( 'title','=','DGM' )->get();
-        $reviewer_list_3 = DB::table('users')->where( 'title','=','GM' )->get();
-        $reviewer_list_2r = DB::table('users')->where('title','=','PFA')->get();
-        $reviewer_list_3r = DB::table('users')->where('title','=','HFA')->get();
-        $reviewer_list_4r = DB::table('users')->where( 'title','=','DGM' )->orWhere('title','=','HFA')->orWhere('title','=','PFA')->get();
-
-        $show_budget_details = DB::table('budget')->where('budget_id', $id )->first();
-        $show_reviewer = DB::table('approvals')->join('users', 'users.id', '=', 'approvals.approving_user_id')->where('budget_id', $id )->select('name', 'approvals.updated_at', 'approvals.status', 'comment', 'category','users.id', 'approvals.approving_user_id')->get();
-
-
-        $name = DB::table('users')->where('id', $show_budget_details->user_id )->first();
-       
-        $branch = DB::table('branches')->where('branch_id', $name->branch_id_ )->first();
-        $total = DB::table('balance')->where('budget_id', $id )->first();
-
-
-        return view('approve', compact('show_budget_details','show_reviewer','show_status','total','name','branch','reviewer_list_1', 'reviewer_list_2', 'reviewer_list_3','reviewer_list_2r','reviewer_list_3r','reviewer_list_4r'));
-    }
-
-
-
-
-
-
-
-
-
-
-    public function approve_post($id)
-    {
-    
-    $count_record = DB::table('approvals')->where('budget_id', $id )->where('approving_user_id', Auth::user()->id )->where('status','=','Approved')->count();
-
-
-     if($count_record>'1'){
-
-        return redirect()->back()->with('failure','Sorry! You already approved this budget');
-        
-        }
-
-
-        elseif(Auth::user()->title == 'PFA' ){
-       
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'On Approval';
-          $budget->save();
-
-
-        $approve = ApprovalsModel::where('category','=','Reviewed by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Approved';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-        Mail::to(Input::get('reviewer'))->send(new ApproveBudgetMail());
-        return redirect('approved')->with('success','Budget approved Successfully!');
-        }
-
-        elseif(Auth::user()->title == 'HFA' ){
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'On Approval';
-          $budget->save();
-
-        $approve = ApprovalsModel::where('category','=','Recommended for budget by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Approved';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-        Mail::to(Input::get('reviewer'))->send(new ApproveBudgetMail());
-        return redirect('approved')->with('success','Budget approved Successfully!');
-        }
-
-        elseif(Auth::user()->title == 'DGM' ){
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'On Approval';
-          $budget->save();
-
-        $approve = ApprovalsModel::where('category','=','Recommended for activity by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Approved';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-        Mail::to(Input::get('reviewer'))->send(new ApproveBudgetMail());        
-        return redirect('approved')->with('success','Budget approved Successfully!');
-        }
-
-        elseif(Auth::user()->title == 'GM' ){
-        
-        $approve = ApprovalsModel::where('category','=','Approved by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Approved';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-
-        $budget = BudgetModel::where('budget_id', $id)->first();
-        $budget->budget_status = 'Approved';
-        $budget->save();
-
-//sends mail 
-
-      //  Mail::to(Input::get('reviewer'))->send(new ApproveBudgetMail());
-
-
-
-        return redirect('approved')->with('success','Budget approved Successfully!');
-
-        }
-
-    else{
-
-//sends mail 
-
-  //      Mail::to(Input::get('reviewer'))->send(new ApproveBudgetMail());
-
-
-
-        return redirect('approved')->with('failure','Sorry You Are Not Authorized to Perform This Operation');
-    }
+ 
+    return redirect('/requests')->with('success', 'Budget Submitted Successfully...........');
 
     }
-
-
-
-
-
-
-
-
-
-
-
-    public function reject_post($id)
-    {
-        if(Auth::user()->title == 'PFA'){
-        $approve = ApprovalsModel::where('category','=','Reviewed by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Rejected';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = NULL;
-        $approve->save();
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'Rejected by '.Auth::user()->name;
-          $budget->save();        
-        Mail::to(Input::get('reviewer'))->send(new RejectedMail());
-        return redirect('approved')->with('failure','Budget Rejected Successfully!');
-        }
-
-        elseif(Auth::user()->title == 'HFA'){
-
-        $approve = ApprovalsModel::where('category','=','Reviewed by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = '0';
-        $approve->status = 'Rejected';
-        $approve->comment = 'Pending';
-        $approve->forward_to = NULL;
-        $approve->save();
-
-        $approve = ApprovalsModel::where('category','=','Recommended for budget by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Rejected';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = NULL;
-        $approve->save();
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'Rejected by '.Auth::user()->name;
-          $budget->save();        
-          Mail::to(Input::get('reviewer'))->send(new RejectedMail());
-        return redirect('approved')->with('success','Budget Rejected Successfully!');
-        }
-
-
-
-        elseif(Auth::user()->title == 'DGM'){
-
-        $approve = ApprovalsModel::where('category','=','Reviewed by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = '0';
-        $approve->status = 'Rejected';
-        $approve->comment = 'Pending';
-        $approve->forward_to = NULL;
-        $approve->save();
-
-        $approve = ApprovalsModel::where('category','=','Recommended for budget by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = '0';
-        $approve->status = 'Rejected';
-        $approve->comment = 'Pending';
-        $approve->forward_to = NULL;
-        $approve->save();
-
-        $approve = ApprovalsModel::where('category','=','Recommended for activity by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Rejected';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'Rejected by '.Auth::user()->name;
-          $budget->save();   
-        Mail::to(Input::get('reviewer'))->send(new RejectedMail());
-        return redirect('approved')->with('success','Budget Rejected Successfully!');
-        }
-
-        elseif(Auth::user()->title == 'GM'){
-
-        $approve = ApprovalsModel::where('category','=','Reviewed by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = '0';
-        $approve->status = 'Rejected';
-        $approve->comment = 'Pending';
-        $approve->forward_to = NULL;
-        $approve->save();
-
-        $approve = ApprovalsModel::where('category','=','Recommended for budget by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = '0';
-        $approve->status = 'Rejected';
-        $approve->comment = 'Pending';
-        $approve->forward_to = NULL;
-        $approve->save();
-
-        $approve = ApprovalsModel::where('category','=','Recommended for activity by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = '0';
-        $approve->status = 'Rejected';
-        $approve->comment = 'Pending';
-        $approve->forward_to = NULL;
-        $approve->save();
-
-        $approve = ApprovalsModel::where('category','=','Approved by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Rejected';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = NULL;
-        $approve->save();
-
-      $budget = BudgetModel::where('budget_id',$id)->first();
-      $budget->budget_status = 'Rejected by '.Auth::user()->name;
-      $budget->save();
-
-
-        Mail::to(Input::get('reviewer'))->send(new RejectedMail());
-        return redirect('approved')->with('failure','Budget Rejected Successfully!');
-        }
-
-
-
-    else{
-
-        return redirect('approved')->with('failure','Sorry You Are Not Authorized to Perform This Operation');
-    }
-
-    }
-
-
-
-
-
-
-
-    public function return_post($id)
-    
-    {
-
-Mail::to(Input::get('reviewer'))->send(new ReturnedMail());
-
-    $count_record = DB::table('approvals')->where('budget_id', $id )->where('approving_user_id', Auth::user()->id )->where('status','=','Returned')->count();
-
-$reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first();
-
-     if($count_record>'1'){
-
-        return redirect()->back()->with('failure','Sorry! You already approved this budget');
-        
-        }
-
-        elseif(Auth::user()->title == 'PFA' ){
-
-        $approve =ApprovalsModel::where('category','=','Reviewed by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Returned';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-
-          $budget->budget_status = 'Returned to -  '.$reviewer->name;
-          $budget->save();   
-
-        return redirect('approved')->with('success','Budget Returned Successfully!');
-
-        }
-
-
-        elseif(Auth::user()->title == 'HFA' ){
-
-        $approve =ApprovalsModel::where('category','=','Recommended for budget by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id ;
-        $approve->status = 'Returned' ;
-        $approve->comment = Input::get('comment') ;
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-
-        $returned =ApprovalsModel::where('forward_to', Input::get('reviewer'))->where('budget_id',$id)->first();
-        $returned->status = 'Returned';
-        $returned->comment = 'Pending';
-        $returned->forward_to = 'Pending';
-        $returned->save();        
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'Returned to - '.$reviewer->name;
-          $budget->save();   
-
-        return redirect('approved')->with('success','Budget Returned Successfully!');
-
-        }
-
-
-        elseif(Auth::user()->title == 'DGM' ){
-
-        $approve =ApprovalsModel::where('category','=','Recommended for activity by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Returned';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-
-        $returned =ApprovalsModel::where('forward_to', Input::get('reviewer'))->where('budget_id',$id)->first();
-        $returned->status = 'Returned';
-        $returned->comment = 'Pending';
-        $returned->forward_to = 'Pending';
-        $returned->save();    
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'Returned to - '.$reviewer->name;
-          $budget->save();   
-
-        return redirect('approved')->with('success','Budget Returned Successfully!');
-        }
-
-       elseif(Auth::user()->title == 'GM' ){
-        $approve =ApprovalsModel::where('category','=','Approved by:')->where('budget_id',$id)->first();
-        $approve->approving_user_id = Auth::user()->id;
-        $approve->status = 'Returned';
-        $approve->comment = Input::get('comment');
-        $approve->forward_to = Input::get('reviewer');
-        $approve->save();
-
-        $returned =ApprovalsModel::where('forward_to', Input::get('reviewer'))->where('budget_id',$id)->first();
-        $returned->status = 'Returned';
-        $returned->comment = 'Pending';
-        $returned->forward_to = 'Pending';
-        $returned->save();    
-
-          $budget = BudgetModel::where('budget_id',$id)->first();
-          $budget->budget_status = 'Returned to - '.$reviewer->name;
-          $budget->save();   
-
-        return redirect('approved')->with('success','Budget Returned Successfully!');
-
-       }
-
-    else{
-
-        return redirect('approved')->with('failure','Sorry You are not Authorized to perform This Operation');
-    }
-
-    }  
-
 
 
 
@@ -747,7 +419,7 @@ $reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first()
 
     public function requests()
     {
-        $list_requests = DB::table('budget')->where('user_id', Auth::user()->id)->get();
+        $list_requests = DB::table('budget')->where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->get();
 
         return view('requests', compact('list_requests'));
     }
@@ -763,6 +435,7 @@ $reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first()
 
             return redirect('/requests')->with('failure','Sorry you still have an Unsettled Business');
         }
+
     else{
 
 
@@ -782,7 +455,7 @@ $reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first()
           return view('add', compact('branch_details','reviewer_list','balance','limits'));
         } */
 
-        return redirect('/add')->with('limits', $limits)->with('balance1', $balance1)->with('balance', $balance)->with('branch_details', $branch_details)->with('reviewer_list', $reviewer_list);
+        return redirect('/add-view')->with('limits', $limits)->with('balance1', $balance1)->with('balance', $balance)->with('branch_details', $branch_details)->with('reviewer_list', $reviewer_list);
   }
     }
 
@@ -790,7 +463,11 @@ $reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first()
 
     public function reports()
     {
-        return view('report');
+         //$budget_details = DB::table('budget')->where('user_id', Auth::user()->id )->get();
+
+         $budget_details = DB::table('budget')->join('balance', 'balance.budget_id', '=' , 'budget.budget_id')->where('budget.user_id', Auth::user()->id )->get();
+
+         return view('report', compact('budget_details'));
     }
 
 
@@ -806,12 +483,17 @@ $reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first()
         $total = DB::table('balance')->where('budget_id', $id )->first();
 
         $remarks_details = DB::table('remarks')->where('budget_id', $id )->first();
-        $remarks_details_count = DB::table('remarks')->where('budget_id', $id )->count();
+
+    $approvals_details_count = DB::table('approvals')->where('budget_id', $id )->where('status','=','Approved')->count();
 
         $budget_id = $id;
+
+        $implementation = DB::table('implementation')->where('budget_id', $id )->get();
+     
+    $impl_count = DB::table('implementation')->where('budget_id', $id )->where('status','=','Not Settled')->orWhere('status','=','Pushed Forward')->count();
      
         $branch = DB::table('branches')->where('branch_id', Auth::user()->branch_id_ )->first();
-        return view('follow', compact('show_budget_details','show_reviewer','show_status','total','branch','budget_id','remarks_details','remarks_details_count'));
+        return view('follow', compact('show_budget_details','show_reviewer','show_status','total','branch','budget_id','remarks_details','approvals_details_count','implementation','impl_count'));
     }
 
 
@@ -825,116 +507,6 @@ $reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first()
         $budget_details = DB::table('budget')->where('budget_id', $id )->first();
         return view('edit_budget', compact('budget_details','branch_details'));
     } 
-
-
-
-
-
-    public function remarks_post(Request $request, $id)
-    {
-          $this->validate($request, [
-            'remarks' => 'required|max:255',
-            'action_date' => 'required|max:255',
-            'actual_cost' => 'required|numeric',
-
-         ]);
-
-
-        $balance = DB::table('balance')->where('budget_id', $id )->first();
-
-        if(Input::get('actual_cost')>$balance->total_cost){
-
-        return redirect()->back()->with('failure','Sorry, the Actual cost cannot be greater than the Total Cost');
-
-        }
-
-        DB::table('remarks')->insert( array(
-
-            'budget_id' =>  $id,
-            'actual_cost' => Input::get('actual_cost'),
-            'expected_action_date' => Input::get('action_date'),
-            'remarks' => Input::get('remarks'),
-            'created_at'     =>   Carbon::now(),
-            'updated_at'     =>  Carbon::now(),
-        ));
-
-        $resultant = $balance->total_cost-Input::get('actual_cost');
-
-        $balance = BalanceModel::where('budget_id',$id)->first();
-        $balance->actual_cost = Input::get('actual_cost');
-        $balance->resultant_balance = $resultant;
-        $balance->save();
-
-        return redirect()->back()->with('success','Congratulations! Remark Submitted Successfully!');
-    }
-
-
-
-
-    public function settle($id)
-    {
-        $balance = DB::table('balance')->where('budget_id', $id )->first();
-        $reviewer_list = DB::table('users')->where( 'title','=','DGM' )->orWhere('title','=','GM')->get();    
-        return view('settle', compact('balance','reviewer_list'));
-    }
-
-
-
-
-
-
-    public function settle_post($id)
-    {
-    
-
-        $balance = RemarksModel::where('budget_id', $id)->first();
-        $balance->final_remarks = Input::get('final_remarks');
-        $balance->reviewer = NULL;
-        $balance->remark_status = 'Remark Submited';
-        $balance->save();
-
-        $approve = BudgetModel::where('budget_id', $id)->first();
-        $approve->business_status = 'On Settlement';
-        $approve->save();
-
-       return redirect('/requests')->with('success','Congratulations Remark Submitted. Wait for Approval.');
-
-    }
-
-
-
-
-
-
-    public function forward_post($id)
-    {
-        $remarks = RemarksModel::where('budget_id', $id)->first();
-        $remarks->reason = Input::get('reason');
-        $remarks->push_forward_date = Input::get('extended_date');
-        $remarks->save();
-
-
-        $budget = BudgetModel::where('budget_id', $id)->first();
-        $budget->business_status = 'Pushed Forward';
-        if($budget->quarter == '1'){
-        $budget->quarter = '2';
-        }
-        elseif($budget->quarter == '2'){
-        $budget->quarter = '3';
-        }
-        elseif($budget->quarter == '3'){
-        $budget->quarter = '4';
-        }
-        else{
-        $budget->quarter = '1';
-        }
-        $budget->save();
-
-       return redirect('/requests')->with('success','Business Output Date has been extended to the next Quarter');
-
-    }
-
-
 
 
 
@@ -955,11 +527,15 @@ $reviewer = DB::table('users')->where('email', Input::get('reviewer') )->first()
             'expected_premium' => 'required|numeric'
          ]);      
 
-$file = $request['file_uploaded'];
+$file = $request['file'];
 $mime = $file->getClientOriginalExtension();
 $now = Carbon::now();
 $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
 $file->storeAs('\files',$filename_renamed);
+
+if($mime != 'xls'){
+        return redirect()->back()->withInput(Input::all())->with('failure','Please check File Format. Only Excel "xls" format allowed');
+}
 
         $older_limits = BlimitModel::where('user_id', Auth::user()->id )->first();
         $older_limits->market_cost =  $limits->market_cost+$budget->market_cost;
@@ -1002,6 +578,36 @@ $file->storeAs('\files',$filename_renamed);
         $balance->total_cost = $total;
         $balance->save();
 
+//Enter data from file to DB
+
+DB::table('implementation')->where('budget_id',$id)->delete();
+
+$mime = $file->getClientOriginalExtension();
+$path = $request->file->getRealPath();
+$results=Excel::load($path)->get();
+
+foreach ($results as $rows) {
+foreach ($rows as $row) {
+
+    if($row->date == ''){
+         
+    return redirect('/requests/follow-up/32789'.$id.'43789721')->with('success', 'Plan Updated Successfully!');
+
+    }
+
+    ImplementationModel::create([
+        'budget_id' => $id,
+        'date_of_visit'  => $row->date,
+        'activities'  => $row->activities, 
+        'place'  => $row->place,
+        'total_cost'  => $row->total,
+        'description'  => $row->description,
+        'expected_premium'  => $row->expected_premium,
+        'bgen_date'  => $row->business_generation_date,
+    ]);
+ }
+ }
+
 
 
     return redirect('requests')->with('success','Request Updated Successfully!');
@@ -1029,5 +635,206 @@ $file->storeAs('\files',$filename_renamed);
 
     }
 
+
+    public function implementation($id)
+    {
+
+    $impl_count = DB::table('implementation')->where('implementation_id', $id )->where('status','=','Settled')->count();
+
+    $impl_details = DB::table('implementation')->where('implementation_id', $id )->first();
+
+    //$budget_id = DB::table('implementation')->where('implementation_id', $id )->first();
+
+    $budget_details = DB::table('budget')->where('budget_id', $impl_details->budget_id )->first();
+
+
+        return view('implementation', compact('impl_count', 'budget_details', 'impl_details'));
+    }
+
+
+    public function implementation_post($id)
+    {
+        
+        $impl = ImplementationModel::where('implementation_id', $id)->first();
+        $impl->remarks = Input::get('remarks');
+        $impl->actual_cost = Input::get('actual_cost');
+        $impl->status = 'Settled';
+        $impl->save();
+
+
+       return redirect()->back()->with('success','Congratulations Remark Updated Successfully');
+
+    }
+
+
+
+    public function settle($id)
+    {
+        $balance = DB::table('balance')->where('budget_id', $id )->first();
+        $budget = DB::table('budget')->where('budget_id', $id )->first();
+        $actual_cost = DB::table('implementation')->where('budget_id', $id )->sum('actual_cost');
+        $reviewer_list = DB::table('users')->where( 'title','=','DGM' )->orWhere('title','=','GM')->orWhere('title','=','HFA')->get();    
+        return view('settle', compact('balance','reviewer_list','actual_cost','budget'));
+    }
+
+
+
+
+    public function push_forward_post($id)
+    {
+        $implementation = ImplementationModel::where('budget_id', $id)->first();
+        $implementation->reason = Input::get('reason');
+        $implementation->bgen_date = Input::get('extended_date');
+        $implementation->status = 'Pushed Forward';
+        $implementation->save();
+
+       return redirect()->back()->with('success','Business Generation Date has been extended to '.Input::get('extended_date'));
+
+    }
+
+
+
+    public function remarks_post(Request $request, $id)
+    {
+
+        $balance = DB::table('balance')->where('budget_id', $id )->first();
+        $budget = DB::table('budget')->where('budget_id', $id )->first();
+        $actual_cost = DB::table('implementation')->where('budget_id', $id )->sum('actual_cost');
+
+
+
+
+        $remarks =  RemarksModel::where('budget_id', $id)->first();
+        $remarks->final_remarks = Input::get('final_remarks');
+        $remarks->reviewer = Input::get('reviewer');
+        $remarks->remark_status = 'Remark Submitted';
+        $remarks->save();
+
+        $approve =  BudgetModel::where('budget_id', $id)->first();
+        $approve->business_status = 'On Settlement';
+        $approve->save();
+ 
+        $balance =  BalanceModel::where('budget_id', $id)->first();
+        $balance->total_cost = $balance->total_cost;
+        $balance->actual_cost = $actual_cost;
+        $balance->resultant_balance = $balance->total_cost-$actual_cost;
+        $balance->save();        
+
+        $user =  User::where('id', Auth::user()->id )->first();
+        $user->balance = $balance->total_cost+Auth::user()->balance-$actual_cost;
+        $user->save();
+
+        Mail::to(Input::get('reviewer'))->send(new RemarkSubmittedMail($id));
+
+       return redirect('/requests')->with('success','Congratulations Remarks Submitted. Wait for Approval.');
+    }
+
+
+
+
+
+public function import(Request $request){
+     //validate the xls file
+  $this->validate($request, array(
+   'file'      => 'required'
+  ));
+
+  if($request->hasFile('file')){
+   $extension = File::extension($request->file->getClientOriginalName());
+   if ($extension == "xls") {
+
+    $path = $request->file->getRealPath();
+
+
+
+$results=Excel::load($path)->get();
+
+  foreach ($results as $rows) {
+
+  foreach ($rows as $row) {
+
+
+    if($row->date == ''){
+        return back();
+    }
+
+    ImplementationModel::create([
+        'budget_id' => '78523',
+        'date_of_visit'  => $row->date,
+        'activities'  => $row->activities, 
+        'place'  => $row->place,
+        'total_cost'  => $row->total,
+        'description'  => $row->description,
+        'expected_premium'  => $row->expected_premium,
+        'bgen_date'  => $row->business_generation_date,
+
+    ]);
+
+ }
+ }
+
 }
+
+   else {
+   // Session::flash
+    return redirect()->back()->with('failure', 'File is a '.$extension.' file.!! Please upload a valid xls file..!!');
+  }
+
+}
+
+
+
+
+
+
+
+/*   $data = Excel::load($path, function($reader) {
+    })->get();
+
+    if(!empty($data) && $data->count()){
+
+     foreach ($data as $key => $value) {
+      $insert[] = [
+      'name' => $value->name,
+      'email' => $value->email,
+      'phone' => $value->phone,  
+      ];
+     }
+
+     if(!empty($insert)){
+
+      $insertData = DB::table('file')->insert($insert);
+
+
+
+      if ($insertData) {
+       Session::flash('success', 'Your Data has successfully imported');
+      }else {                        
+       Session::flash('error', 'Error inserting the data..');
+       return back();
+      }
+     }
+    }
+
+    return back();
+
+   }else {
+    Session::flash('error', 'File is a '.$extension.' file.!! Please upload a valid xls/csv file..!!');
+    return back();*/
+
+
+
+
+ }
+
+ 
+
+
+
+
+
+
+
+}
+
 

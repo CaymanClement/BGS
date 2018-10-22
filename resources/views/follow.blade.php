@@ -48,13 +48,14 @@
  @endforeach          
 
                             <tr><td>Total Cost</td><td>{{ $show->market_cost+$show->travelling_cost+$show->fuel_cost+$show->postage_cost+$show->fax_cost }}</td></tr>  
-@if( $show->business_status == 'Not settled' && $show->budget_status=='Approved' && $remarks_details>'1')
+@if(  $impl_count == '0' && $approvals_details_count != '0' )
                             <tr><td>Settle Business</td><td><a href="/requests/follow-up/32789{{ $total->budget_id }}43789721/settle" class="btn btn-success btn-block">Settle Business</a></td></tr>
-@elseif( $show->business_status == 'Pushed Forward' && $show->budget_status=='Approved' && $remarks_details>'1')
-                            <tr><td>Settle Business</td><td><a href="/requests/follow-up/32789{{ $total->budget_id }}43789721/settle" class="btn btn-success btn-block">Settle Business</a></td></tr>
+
 @else
                             <tr><td>Settle Business</td><td><button class="btn btn-success btn-block disabled">Settle Business</button></td></tr>
 @endif
+
+
 
 @if( $show->budget_status =='created' && $show_status == 0 )
                             <tr><td>Edit:</td><td><a href="/requests/follow-up/32789{{ $show->budget_id }}43789721/edit" class="btn btn-warning btn-block">Edit Details</a></td></tr>
@@ -64,7 +65,7 @@
                             <tr><td>Edit:</td><td><a href="/requests/follow-up/32789{{ $show->budget_id }}43789721/edit" class="btn btn-warning btn-block">Edit Details</a></td></tr>
 
 @else
-                            <tr><td>Edit:</td><td><a href="#" class="btn btn-warning btn-block disabled">Edit Details</a></td></tr>
+                            <tr><td>Edit:</td><td><button class="btn btn-warning btn-block disabled">Edit Details</button></td></tr>
 @endif
                       </table>  
 
@@ -105,126 +106,53 @@
                           </div>
 
 
+
+
+
 <hr>
- @if( $show_status<1 )
-            <p><b>Implementation status of Activities:</b></p>
-            <form class="form-horizontal" action="#">
-                         <div class="form-group">
-                            <label class="col-md-2 control-label">Remarks:</label>
-                            <div class="col-md-10">
-                                <textarea id="name" class="form-control" name="remarks" disabled></textarea>
-                            </div>
-                        </div>
+ <b>Implementation Status of Activities</b>
 
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Actual Cost</label>
+ @if( $approvals_details_count != '0')
+<table class="table table-dark" id="clemtable">
+    
+    <thead>
+        <tr>
+            <th>Date of Visit</th>
+            <th>Place</th>
+            <th>Activities</th>
+            <th>Cost</th>
+            <th>Business Generation Date</th>
+            <th>Status</th>
+            <th>View</th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach($implementation as $impl)
+            <tr>
+            <td>{{ $impl->date_of_visit }}</td>
+            <td>{{ $impl->place }}</td>
+            <td>{{ $impl->activities }}</td>
+            <td>{{ $impl->total_cost }}</td>
+            <td>{{ $impl->bgen_date }}</td>
+            
+            @if($impl->status == 'Settled')
+            <td class="success">{{ $impl->status }}</td>
+            @elseif($impl->status == 'Pushed Forward')
+            <td class="warning">{{ $impl->status }}</td>
+            @else
+            <td class="danger">{{ $impl->status }}</td>
+            @endif
 
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="actual_cost" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Expected Action Date:</label>
-
-                            <div class="col-md-10">
-                                <input class="form-control" name="action_date" disabled/>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-10 col-md-offset-2">
-                                <button type="submit" class="btn btn-success btn-block disabled" disabled>
-                                    Submit Remarks
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
-@elseif( $remarks_details>'1' )
-
-            <p><b>Implementation status of Activities:</b></p>
-            <form class="form-horizontal" action="#">
-                         <div class="form-group">
-                            <label class="col-md-2 control-label">Remarks:</label>
-                            <div class="col-md-10">
-                                <textarea id="name" class="form-control" name="remarks" disabled>{{ $remarks_details->remarks }}</textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Actual Cost</label>
-
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="actual_cost" value="{{ $remarks_details->actual_cost }}" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Expected Action Date:</label>
-
-                            <div class="col-md-10">
-                                <input class="form-control" name="action_date" value="{{ $remarks_details->expected_action_date }}" disabled/>
-                            </div>
-                        </div>
-                    </form>
-
+            <td>
+            <a href="/requests/follow-up/32789{{ $impl->implementation_id }}43789721/feedback" class="btn btn-block btn-success">Details</a>
+            </td>
+            </tr>
+            @endforeach
+    </tbody>
+</table>
 @else
- 
-            <p><b>Implementation status of Activities:</b></p>
-                <form class="form-horizontal" role="form" method="POST" action="/requests/follow-up/32789{{ $total->budget_id }}43789721/remarks/post">
-                        {{ csrf_field() }}
-
-                        <div class="form-group{{ $errors->has('remarks') ? ' has-error' : '' }}">
-                            <label for="remarks" class="col-md-2 control-label">Remarks:</label>
-
-                            <div class="col-md-10">
-                                <textarea id="name" class="form-control" name="remarks" required autofocus></textarea>
-
-                                @if ($errors->has('remarks'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('remarks') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('actual_cost') ? ' has-error' : '' }}">
-                            <label for="actual_cost" class="col-md-2 control-label">Actual Cost</label>
-
-                            <div class="col-md-10">
-                                <input id="actual_cost" type="text" class="form-control" name="actual_cost" required>
-
-                                @if ($errors->has('actual_cost'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('actual_cost') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('action_date') ? ' has-error' : '' }}">
-                            <label for="action_date" class="col-md-2 control-label">Expected Action Date:</label>
-
-                            <div class="col-md-10">
-                                <input type="date" id="name" class="form-control" name="action_date" required autofocus/>
-
-                                @if ($errors->has('action_date'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('action_date') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-10 col-md-offset-2">
-                                <button type="submit" class="btn btn-success btn-block">
-                                    Submit Remarks
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+<br>
+<i>Waiting for Approval</i>
 @endif
             </div>
         </div>

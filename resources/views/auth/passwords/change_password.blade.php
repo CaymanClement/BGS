@@ -8,11 +8,24 @@
                 <div class="panel-heading" style="background:url(/img/bg2.jpg); background-size:cover; color: white;">Reset Password</div>
 
                 <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+
+
+                              @if (session('success'))
+                             <div class="alert alert-success alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('success') }}
+                             </div>
+                             @elseif (session('failure'))
+                             <div class="alert alert-danger alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('failure') }}
+                             </div>
+                             @elseif (session('warning'))
+                             <div class="alert alert-warning alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('warning') }}
+                             </div>
+                             @endif
 
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/change-password/go') }}">
                         {{ csrf_field() }}

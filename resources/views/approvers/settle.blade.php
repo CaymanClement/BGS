@@ -11,6 +11,24 @@
                 <div class="panel-body">
                     
 
+                              @if (session('success'))
+                             <div class="alert alert-success alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('success') }}
+                             </div>
+                             @elseif (session('failure'))
+                             <div class="alert alert-danger alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('failure') }}
+                             </div>
+                             @elseif (session('warning'))
+                             <div class="alert alert-warning alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('warning') }}
+                             </div>
+                             @endif
+
+           
                      <table id="clemtable" class="table table-striped">
                         <thead>
                           <tr>
@@ -18,11 +36,11 @@
                             <th>Month</th>
                             <th>Place</th>
                             <th>Output Description</th>
-                            <th>Remarks/Feedback</th>
                             <th>Final Remarks</th>
                             <th>Approved By</th>
                             <th>Date</th>
                             <th>Business Status</th>
+                            <th>Impl. Status</th>
                             <th>Approve</th>
                           </tr>
                         </thead>
@@ -33,11 +51,11 @@
                             <td>{{ $remarks->month }}</td>
                             <td>{{ $remarks->place }}</td>
                             <td>{{ $remarks->description }}</td>
-                            <td>{{ $remarks->remarks }}</td>
                             <td>{{ $remarks->final_remarks }}</td>
-                            <td>{{ $remarks->reviewer }}</td>
+                            <td>{{ $remarks->approved_by }}</td>
                             <td>{{ $remarks->updated_at }}</td>
                             <td>{{ $remarks->remark_status }}</td>
+                            <td><a href="/approver/settle/view9273829{{ $remarks->budget_id }}22938292" class="btn btn-default">View</a></td>
                             @if($remarks->remark_status == 'Business Settled')
                             <td><button class="btn btn-success disabled">Approve</button></td>
                             @else

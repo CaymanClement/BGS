@@ -9,7 +9,23 @@
                 <div class="panel-heading">Update Request:</div>
                 <div class="panel-body">
                     
-
+                              @if (session('success'))
+                             <div class="alert alert-success alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('success') }}
+                             </div>
+                             @elseif (session('failure'))
+                             <div class="alert alert-danger alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('failure') }}
+                             </div>
+                             @elseif (session('warning'))
+                             <div class="alert alert-warning alert-dismissable">
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ session('warning') }}
+                             </div>
+                             @endif
+                             
                     <form class="form-horizontal" role="form" id="inst_form" method="POST" action="/requests/follow-up/32789{{ $budget_details->budget_id }}43789721/edit/post" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         
@@ -181,15 +197,15 @@
                         </div>
 
 
-                        <div class="form-group{{ $errors->has('file_uploaded') ? ' has-error' : '' }}">
-                            <label for="file_uploaded" class="col-md-4 control-label">File Uploaded:</label>
+                        <div class="form-group{{ $errors->has('file') ? ' has-error' : '' }}">
+                            <label for="file" class="col-md-4 control-label">File Uploaded:</label>
 
                             <div class="col-md-6">
-                                <input id="file_uploaded" type="file" class="form-control" name="file_uploaded" value="{{ $budget_details->file_name }}" required>
+                                <input id="file" type="file" class="form-control" name="file" value="{{ $budget_details->file_name }}" required>
 
-                                @if ($errors->has('file_uploaded'))
+                                @if ($errors->has('file'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('file_uploaded') }}</strong>
+                                        <strong>{{ $errors->first('file') }}</strong>
                                     </span>
                                 @endif
                             </div>

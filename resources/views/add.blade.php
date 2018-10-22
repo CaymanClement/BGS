@@ -232,15 +232,15 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('file_uploaded') ? ' has-error' : '' }}">
-                            <label for="file_uploaded" class="col-md-4 control-label">File Uploaded:</label>
+                        <div class="form-group{{ $errors->has('file') ? ' has-error' : '' }}">
+                            <label for="file" class="col-md-4 control-label">File Uploaded:</label>
 
                             <div class="col-md-6">
-                                <input id="file_uploaded" type="file" class="form-control" name="file_uploaded" value="{{ old('file_uploaded') }}" required>
+                                <input id="file" type="file" class="form-control" name="file" value="{{ old('file') }}" required>
 
-                                @if ($errors->has('file_uploaded'))
+                                @if ($errors->has('file'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('file_uploaded') }}</strong>
+                                        <strong>{{ $errors->first('file') }}</strong>
                                     </span>
                                 @endif
                             </div>

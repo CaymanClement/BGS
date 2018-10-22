@@ -12,13 +12,11 @@ class RemarksModel extends Model
 
   protected $fillable =[
     	'budget_id',
-        'actual_cost', 
-        'expected_action_date', 
-        'push_forward_date', 
-        'remarks', 
+        'actual_cost',
         'final_remarks',
-        'reason',
         'reviewer',
+        'reviewer2',
+        'reviewer3',
         'remark_status',
     ];
 
