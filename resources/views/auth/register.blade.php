@@ -58,12 +58,14 @@
                             <div class="col-md-6">
                                 <select id="title" class="form-control" name="title" required autofocus>
                                    <option value="{{ old('title') }}">{{ old('title') }}</option>
+                                   <option value="Staff">Staff</option>
                                    <option value="HFA">HFA</option>
                                    <option value="PFA">PFA</option>
                                    <option value="DGM">DGM</option>
                                    <option value="GM">General Manager</option>
                                    <option value="System Admin">System Admin</option>
-                                   <option value="Staff">Staff</option>
+                                   <option value="Auditor">Auditor</option>
+                                   
                                  </select>
 
                                 @if ($errors->has('title'))

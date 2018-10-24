@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.auditor')
 
 @section('content')
 
@@ -24,7 +24,7 @@
                         </thead>
                         <tbody>
                           
-                            @foreach($budget_details as $bd)
+                          	@foreach($budget_details as $bd)
                             <tr>
                             <td>{{ $bd->month }}</td>
                             <td>{{ $bd->quarter }}</td>
@@ -33,7 +33,7 @@
                             <td>{{ $bd->actual_cost }}</td>
                             
                             </tr>
-                            @endforeach
+                          	@endforeach
 
                         </tbody>
                       </table>        

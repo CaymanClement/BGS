@@ -44,7 +44,11 @@ class RedirectIfAuthenticated
             }
             elseif( Auth::user()->title == 'Staff' && Auth::user()->status == 'Active'){
             return redirect('/home'); 
-            }            
+            } 
+
+            elseif( Auth::user()->title == 'Auditor' && Auth::user()->status == 'Active'){
+            return redirect('/auditor'); 
+            }                
             else{
                     Auth::logout();
                     return redirect('/error');

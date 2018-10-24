@@ -85,6 +85,21 @@ Route::post('/admin/limit/{id}/edit/post', 'LimitsController@update');
 Route::get('/admin/limit/{id}/reset', 'LimitsController@reset');
 });
 
+
+
+
+//Auditor
+Route::group(['middleware' => 'auditor'], function () {
+
+Route::get('/auditor', 'AuditorController@home');
+Route::get('/auditor/requests', 'AuditorController@budget_requests');
+Route::get('/auditor/report', 'AuditorController@report');
+Route::get('/auditor/settle', 'AuditorController@settle');
+Route::get('/auditor/balance', 'AuditorController@balance');
+Route::get('/auditor/settle/view9273829{id}22938292', 'AuditorController@settle_view');
+Route::get('/auditor/view/32789{id}43789721', 'AuditorController@view');
+});
+
 Route::get('/view-file-738283873764671737{id}93624163535261', 'HomeController@download_file');
 
 Route::get('/change-password', 'AdminController@change_password');

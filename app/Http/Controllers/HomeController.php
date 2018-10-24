@@ -29,6 +29,7 @@ use App\Mail\ApproveBudgetMail;
 use App\Mail\RejectedMail;
 use App\Mail\RemarkSubmittedMail;
 use App\Mail\ReturnedMail;
+use App\Mail\AddPlanMail;
 use Illuminate\Support\Facades\Mail;
 
 //for file ---------------------
@@ -172,8 +173,6 @@ class HomeController extends Controller
 
    $balance = DB::table('balance')->join('budget', 'balance.budget_id', '=' , 'budget.budget_id')->where('budget.user_id', Auth::user()->id)->select('*')->orderBy('budget.updated_at', 'desc')->first();
 
-  $balance_count = DB::table('balance')->join('budget', 'balance.budget_id', '=' , 'budget.budget_id')->where('budget.user_id', Auth::user()->id)->select('balance_id')->orderBy('budget.updated_at', 'desc')->groupBy('balance.budget_id')->count();
-
 
 //store file
 
@@ -208,7 +207,6 @@ if($mime != 'xls'){
             'carry_over_balance' => '0',
             'first_approval' => Input::get('reviewer'),
             'file_name' => $filename_renamed ,
-            'file_name' => $filename_renamed ,
             'created_at'     =>   Carbon::now(),
             'updated_at'     =>  Carbon::now(),
             'quarter' => '1'   ));
@@ -218,14 +216,7 @@ if($mime != 'xls'){
 
 
         elseif(Input::get('month')=='April' || Input::get('month')=='May' || Input::get('month')=='June'){
-/*
-        $file = $request['file'];
-        $mime = $file->getClientOriginalExtension();
-        $now = Carbon::now();
-        $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
-        $file->storeAs('\files',$filename_renamed);
 
-*/
 
         DB::table('budget')->insert( array(
 
@@ -249,14 +240,7 @@ if($mime != 'xls'){
             'quarter' => '2'   ));
             }
             elseif(Input::get('month')=='July' || Input::get('month')=='August' || Input::get('month')=='September'){
-/*
-        $file = $request['file'];
-        $mime = $file->getClientOriginalExtension();
-        $now = Carbon::now();
-        $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
-        $file->storeAs('\files',$filename_renamed);
 
-*/
 
         DB::table('budget')->insert( array(
 
@@ -280,14 +264,7 @@ if($mime != 'xls'){
             'quarter' => '3'   ));
             }
             else{
-/*
-        $file = $request['file'];
-        $mime = $file->getClientOriginalExtension();
-        $now = Carbon::now();
-        $filename_renamed = Auth::user()->username.'_'.$now->day.'_'.$now->month.'_'.$now->year.'_.'.$mime;
-        $file->storeAs('\files',$filename_renamed);
 
-*/
 
         DB::table('budget')->insert( array(
 
@@ -346,21 +323,10 @@ if($mime != 'xls'){
             'updated_at'     =>  NULL,
         ));
 
-//use update method 
-if($balance_count>1){
-$total =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get('fuel_cost')+Input::get('postage_cost')+Input::get('fax_cost')-$balance->resultant;
+//balance
+$total_cst = Input::get('market_cost')+Input::get('travelling_cost')+Input::get('fuel_cost')+Input::get('postage_cost')+Input::get('fax_cost');
 
-    DB::table('balance')->insert( array(
-
-            'budget_id' => $created_id,
-            'total_cost' => $total,
-            'created_at'     =>   Carbon::now(),
-            'updated_at'     =>  Carbon::now(),
-        ));
-}
-
-else{
-$total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get('fuel_cost')+Input::get('postage_cost')+Input::get('fax_cost');
+if(Auth::user()->balance > $total_cst){
 
     DB::table('balance')->insert( array(
 
@@ -371,6 +337,17 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         ));
 }
 
+else{
+
+
+    DB::table('balance')->insert( array(
+
+            'budget_id' => $created_id,
+            'total_cost' => $total_cst-Auth::user()->balance,
+            'created_at'     =>   Carbon::now(),
+            'updated_at'     =>  Carbon::now(),
+        ));
+
 //Update Limits
         $limits = limit::where('user_id', Auth::user()->id )->first();
         $limits->market_cost = $limits->market_cost-Input::get('market_cost');
@@ -378,7 +355,12 @@ $total_cst =  Input::get('market_cost')+Input::get('travelling_cost')+Input::get
         $limits->fuel_cost = $limits->fuel_cost-Input::get('fuel_cost');
         $limits->fax_cost = $limits->fax_cost-Input::get('fax_cost');
         $limits->postage_cost = $limits->postage_cost-Input::get('postage_cost');
-        $limits->save();
+        $limits->save();    
+}
+
+//Sends a mail to approver 
+        Mail::to(Input::get('reviewer'))->send(new AddPlanMail($created_id));
+
 
 //Enter data from file to DB
 
@@ -390,8 +372,12 @@ foreach ($results as $rows) {
 foreach ($rows as $row) {
 
     if($row->date == ''){
-         
-    return redirect('/requests')->with('success', 'Budget Submitted Successfully!');
+    if(Auth::user()->balance > $total_cst){
+    return redirect('/requests')->with('warning', 'Request Submitted! Your Account Balance is greater than the requested amount. Be Notified that you will use your Remaining Balance for this Activity Plan once Approved');
+    }
+   else{
+   return redirect('/requests')->with('success', 'Activity Plan Submitted Successfully! Be notified that the total cost will be computed automatically by Utilizing your Account Balance '); 
+    }
 
     }
 
@@ -429,9 +415,9 @@ foreach ($rows as $row) {
     {
 
 
-    $budget_record = DB::table('budget')->where('user_id', Auth::user()->id )->where('business_status','=','Not settled')->orWhere('business_status','=','Pushed Forward')->count();
+    $budget_record = DB::table('budget')->where('user_id', Auth::user()->id )->where('business_status','!=','Settled')->count();
 
-        if($budget_record>'1'){
+        if($budget_record>='1'){
 
             return redirect('/requests')->with('failure','Sorry you still have an Unsettled Business');
         }

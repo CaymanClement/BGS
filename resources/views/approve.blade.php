@@ -32,9 +32,14 @@
                               
                               <p><b>Name: </b> {{ $name->name }} - {{ $name->title }}</p>
                               <p><b>Location: </b> {{ $branch->b_name }} -- {{ $branch->b_region }} -- {{ $branch->b_zone }}</p>
-                              <p><b>Total Cost: </b> {{ $total->total_cost }} </p>
-                              <p><b>Expected Premium: </b> {{ $show_budget_details->expected_premium }} </p> <hr>
-
+                              <p><b>Expected Premium: </b> {{ $show_budget_details->expected_premium }} </p>
+                              <p><b>Total Cost: </b>  <b style="color: green">{{ $total->total_cost }}</b> </p>
+                              <p><b>User's Account Balance: </b> {{ $name->balance }} </p><br>
+                              @if($name->balance > $total->total_cost)
+                              <p style="color: red"><b>This Plan will utilize the user's remaining Account Balance </b><br>(User's balance is greater than the requested amount)</p>
+                              @else
+                              @endif
+                              <hr>
                               <h4>Approvals:</h4>
 
                               <div class="row">

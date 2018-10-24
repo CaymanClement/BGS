@@ -220,7 +220,7 @@
                                  <select name="reviewer" class="form-control" id="reviewer" required autofocus>
                                    <option value="{{ old('reviewer') }}">{{ old('reviewer') }}</option>
                                     @foreach($reviewer_list as $reviewer)
-                                    <option value="{{ $reviewer->name }}">{{ $reviewer->name }} - {{ $reviewer->title }}</option>
+                                    <option value="{{ $reviewer->email }}">{{ $reviewer->name }} - {{ $reviewer->title }}</option>
                                     @endforeach
                                  </select>
                                 
@@ -233,7 +233,7 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('file') ? ' has-error' : '' }}">
-                            <label for="file" class="col-md-4 control-label">File Uploaded:</label>
+                            <label for="file" class="col-md-4 control-label">File: <i>Format .xls </i></label>
 
                             <div class="col-md-6">
                                 <input id="file" type="file" class="form-control" name="file" value="{{ old('file') }}" required>

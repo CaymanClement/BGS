@@ -1,4 +1,4 @@
-@extends('layouts.approvers')
+@extends('layouts.auditor')
 @section('content')
 <div class="container">
     <div class="row">
@@ -37,7 +37,7 @@
 </div> 
 
  <div class="card col-md-3">
-<a href="/approver/settle" style="color: black;">
+<a href="/auditor/settle" style="color: black;">
   <span class="fa fa-cloud"></span>
   <div class="container">
     <h4><b>{{ $count_unsettled }}</b></h4>
@@ -47,7 +47,7 @@
 </div> 
 
  <div class="card col-md-3">
-<a href="/approver/requests" style="color: black;">
+<a href="/auditor/requests" style="color: black;">
   <span class="fa fa-cloud"></span>
   <div class="container">
     <h4><b>{{ $count_returned }}</b></h4>
@@ -57,7 +57,7 @@
 </div> 
 
  <div class="card col-md-3">
-<a href="/approver/requests" style="color: black;">
+<a href="/auditor/requests" style="color: black;">
   <span class="fa fa-cloud"></span>
   <div class="container">
     <h4><b>{{ $count_unapproved }}</b></h4>
@@ -107,10 +107,10 @@
                             <td class="danger">
 {{ $requests->budget_status }}
                             </td>
-                            <td><a href="/approve/329382329383293823983238{{ $requests->budget_id }}874393239328923982378923782739237" class="btn btn-success">Approve</a></td>
+                            
                             @endif
                             <td> <a href="/view-file-738283873764671737{{ $requests->budget_id }}93624163535261" class="btn btn-warning">View File</a></td>
-                            <td><a href="/approver/view/32789{{ $requests->budget_id }}43789721" class="btn btn-default">Details</a></td>
+                            <td><a href="/auditor/view/32789{{ $requests->budget_id }}43789721" class="btn btn-default">Details</a></td>
                           </tr>
                           @endforeach
    

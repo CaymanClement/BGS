@@ -289,16 +289,20 @@ foreach ($rows as $row) {
     public function approve_post($id)
     {
     
-    $count_record = DB::table('approvals')->where('budget_id', $id )->where('approving_user_id', Auth::user()->id )->where('status','=','Approved')->count();
+    $rec1 = DB::table('approvals')->where('budget_id', $id )->where('approving_user_id', Auth::user()->id )->Where('status','=','Approved')->count();
+    $rec2 = DB::table('approvals')->where('budget_id', $id )->where('approving_user_id', Auth::user()->id )->Where('status', '=' ,'Recommended')->count();
+    $rec3 = DB::table('approvals')->where('budget_id', $id )->where('approving_user_id', Auth::user()->id )->Where('status', '=' ,'Reviewed')->count();
 
-     if($count_record>'1'){
+
+
+     if($rec1 > 0 || $rec2 > 0 || $rec3 > 0){
 
         return redirect()->back()->with('failure','Sorry! You already approved this budget');
         
         }
 
 
-        elseif(Auth::user()->title == 'PFA' ){
+    if(Auth::user()->title == 'PFA' ){
        
           $budget = BudgetModel::where('budget_id',$id)->first();
           $budget->budget_status = 'On Approval';
@@ -420,7 +424,21 @@ foreach ($rows as $row) {
 //sends mail 
         $show_budget_details = DB::table('budget')->where('budget_id', $id )->first();
         $requester = DB::table('users')->where('id', $show_budget_details->user_id )->first();
-        
+
+//Updates user balance
+
+        $show_budget_details = DB::table('budget')->where('budget_id', $id )->first();
+        $user = DB::table('users')->where('id', $show_budget_details->user_id )->first();
+        $balance = DB::table('balance')->where('budget_id', $id )->first();
+        $real_balance = $user->balance-$balance->total_cost;
+
+        if($user->balance > $balance->total_cost){
+
+        $user = User::where('id', $user->id)->first();
+        $user->balance = $real_balance;
+        $user->save();
+         }
+
         Mail::to($requester->email)->send(new ApprovedMail($id));
 
 

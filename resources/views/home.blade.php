@@ -13,45 +13,45 @@
                    <br>
                        <div class="row">
        
- <div class="card col-md-3">
-<a href="#" style="color: black;">
-  <span class="fa fa-cloud"></span>
-  <div class="container">
-    <h4><b>{{ $count_unapproved }}</b></h4>
-    <p>Unapproved Activity Plans</p>
-  </div>
-  </a>
-</div> 
+                          <div class="card col-md-3">
+                          <a href="#" style="color: black;">
+                          <span class="fa fa-cloud"></span>
+                          <div class="container">
+                            <h4><b>{{ $count_unapproved }}</b></h4>
+                            <p>Unapproved Activity Plans</p>
+                          </div>
+                          </a>
+                          </div> 
 
- <div class="card col-md-3">
-<a href="#" style="color: black;">
-  <span class="fa fa-cloud"></span>
-  <div class="container">
-    <h4><b>{{ $count_unsettled }}</b></h4>
-    <p>Unsettled Business</p>
-  </div>
-  </a>
-</div> 
+                          <div class="card col-md-3">
+                          <a href="#" style="color: black;">
+                          <span class="fa fa-cloud"></span>
+                          <div class="container">
+                            <h4><b>{{ $count_unsettled }}</b></h4>
+                            <p>Unsettled Business</p>
+                          </div>
+                          </a>
+                          </div> 
 
- <div class="card col-md-3">
-<a href="#" style="color: black;">
-  <span class="fa fa-cloud"></span>
-  <div class="container">
-    <h4><b>{{ $count_unsettled_activities }}</b></h4>
-    <p>Unsettled Activities</p>
-  </div>
-  </a>
-</div> 
+                          <div class="card col-md-3">
+                          <a href="#" style="color: black;">
+                          <span class="fa fa-cloud"></span>
+                          <div class="container">
+                            <h4  style="color: red;"><b>{{ $count_unsettled_activities }}</b></h4>
+                            <p>Unsettled Activities</p>
+                          </div>
+                          </a>
+                          </div> 
 
- <div class="card col-md-3">
-<a href="#" style="color: black;">
-  <span class="fa fa-cloud"></span>
-  <div class="container">
-    <h4><b>{{ $count_pushed }}</b></h4>
-    <p>Pushed Forward Activities </p>
-  </div>
-  </a>
-</div> 
+                          <div class="card col-md-3">
+                          <a href="#" style="color: black;">
+                          <span class="fa fa-cloud"></span>
+                          <div class="container">
+                            <h4><b>{{ $count_pushed }}</b></h4>
+                            <p>Pushed Forward Activities </p>
+                          </div>
+                          </a>
+                          </div> 
 
 <br>
 <br>
